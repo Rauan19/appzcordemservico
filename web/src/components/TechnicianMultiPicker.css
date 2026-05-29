@@ -1,0 +1,63 @@
+.technician-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.technician-picker-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.technician-chip {
+  min-height: 28px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.technician-chip:hover {
+  border-color: var(--accent);
+}
+
+.technician-chip.active {
+  background: var(--accent-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.technician-picker-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.technician-clear {
+  border: none;
+  background: none;
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.technician-clear:hover {
+  text-decoration: underline;
+}
+
+.technician-picker-hint,
+.technician-picker-empty {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}

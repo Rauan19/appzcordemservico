@@ -1,0 +1,49 @@
+# Dependencies — qualquer pasta node_modules no monorepo
+node_modules/
+**/node_modules/
+
+# Build
+dist/
+**/dist/
+build/
+**/build/
+
+# Env e secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.local
+
+# Firebase / credenciais
+**/google-services.json
+**/firebase-service-account.json
+**/*firebase*adminsdk*.json
+
+# Docker / DB local
+zcnetconfig_pgdata/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# SO / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Expo (caso alguém rode na raiz)
+.expo/
+web-build/
+
+# Prisma / cache
+**/.prisma/
+
+# TypeScript
+*.tsbuildinfo

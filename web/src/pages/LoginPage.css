@@ -1,0 +1,55 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background:
+    radial-gradient(circle at top right, rgba(43, 140, 255, 0.15), transparent 40%),
+    var(--bg);
+}
+
+.login-panel {
+  width: 100%;
+  max-width: 440px;
+}
+
+.login-hero {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.login-logo {
+  width: 160px;
+  max-width: 100%;
+  margin-bottom: 8px;
+}
+
+.login-hero h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--primary);
+}
+
+.login-hero p {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.login-form h2 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.login-btn {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.login-hint {
+  margin: 16px 0 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.4;
+}

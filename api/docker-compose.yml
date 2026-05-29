@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: zcnetconfig-db
+    ports:
+      - "5439:5432"
+    environment:
+      POSTGRES_USER: zc
+      POSTGRES_PASSWORD: zcpass
+      POSTGRES_DB: zcnetconfig
+    volumes:
+      - zcnetconfig_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zc -d zcnetconfig"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  zcnetconfig_pgdata:
+

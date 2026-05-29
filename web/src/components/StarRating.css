@@ -1,0 +1,29 @@
+.star-rating {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.star-rating .star {
+  border: none;
+  background: none;
+  padding: 0;
+  line-height: 1;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+
+.star-rating .star.filled {
+  color: #f59e0b;
+}
+
+.star-rating .star:disabled {
+  cursor: default;
+}
+
+.star-rating-md .star {
+  font-size: 1.25rem;
+}
+
+.star-rating-sm .star {
+  font-size: 0.875rem;
+}
