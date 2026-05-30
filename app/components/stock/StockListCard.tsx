@@ -78,7 +78,7 @@ export function StockListCard({ product, balance }: Props) {
             {balance <= 0
               ? "Indisponível para lançamento"
               : balance <= 5
-                ? "Saldo crítico — avise o almoxarifado"
+                ? "Saldo crítico  avise o almoxarifado"
                 : "Pronto para uso em OS"}
           </Text>
         </View>

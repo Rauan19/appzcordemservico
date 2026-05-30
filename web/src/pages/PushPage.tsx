@@ -135,11 +135,11 @@ export function PushPage() {
       <div className="push-stats">
         <div className="card push-stat">
           <span className="push-stat-label">Dispositivos conectados</span>
-          <strong className="push-stat-value">{stats?.totalDevices ?? "—"}</strong>
+          <strong className="push-stat-value">{stats?.totalDevices ?? ""}</strong>
         </div>
         <div className="card push-stat">
           <span className="push-stat-label">Técnicos com app ativo</span>
-          <strong className="push-stat-value">{stats?.connectedTechnicians ?? "—"}</strong>
+          <strong className="push-stat-value">{stats?.connectedTechnicians ?? ""}</strong>
         </div>
         <div className="card push-stat push-stat-wide">
           <span className="push-stat-label">Firebase na API</span>
@@ -258,7 +258,7 @@ export function PushPage() {
           <ol>
             <li>Instale o app nativo no tablet (não funciona no Expo Go).</li>
             <li>Faça login como técnico e aceite permissão de notificação.</li>
-            <li>Volte aqui e clique em <strong>Atualizar</strong> — o dispositivo deve aparecer na lista.</li>
+            <li>Volte aqui e clique em <strong>Atualizar</strong>  o dispositivo deve aparecer na lista.</li>
             <li>Envie um push de teste e confira som/vibração no tablet.</li>
           </ol>
           <p className="push-help-note">

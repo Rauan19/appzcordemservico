@@ -73,20 +73,18 @@ export class ServiceOrderService {
       scheduledAt: input.scheduledAt ? new Date(input.scheduledAt) : undefined,
     });
 
-    if (assignedToIds.length > 0) {
-      void pushNotificationService
-        .notifyNewServiceOrder({
-          orderId: order.id,
-          code: order.code,
-          title: order.title,
-          priority: order.priority,
-          customerName: order.customer?.fullName,
-          technicianIds: assignedToIds,
-        })
-        .catch((err) => {
-          console.error("[push] Falha ao notificar técnicos:", err);
-        });
-    }
+    void pushNotificationService
+      .notifyNewServiceOrder({
+        orderId: order.id,
+        code: order.code,
+        title: order.title,
+        priority: order.priority,
+        customerName: order.customer?.fullName,
+        technicianIds: assignedToIds,
+      })
+      .catch((err) => {
+        console.error("[push] Falha ao notificar técnicos:", err);
+      });
 
     return order;
   }

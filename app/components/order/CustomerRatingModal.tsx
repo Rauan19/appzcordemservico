@@ -25,9 +25,9 @@ type Props = {
   saving: boolean;
   onClose: () => void;
   onSave: (data: { serviceOrderId: string; rating: number; comment: string }) => void;
-  /** OS fixa — modal aberto dentro do detalhe da ordem */
+  /** OS fixa  modal aberto dentro do detalhe da ordem */
   fixedOrder?: RatingOrderInfo;
-  /** Lista de OS — modal da aba Avaliações */
+  /** Lista de OS  modal da aba Avaliações */
   rateableOrders?: RatingOrderInfo[];
   initialOrderId?: string;
 };

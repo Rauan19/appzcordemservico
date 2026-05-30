@@ -26,16 +26,30 @@ export class PushNotificationService {
     title: string;
     priority: string;
     customerName?: string;
-    technicianIds: string[];
+    technicianIds?: string[];
   }) {
-    if (!isFirebaseConfigured() || input.technicianIds.length === 0) return;
+    if (!isFirebaseConfigured()) {
+      console.warn("[push] Firebase não configurado  nova OS", input.code);
+      return;
+    }
 
     const messaging = getFirebaseMessaging();
-    if (!messaging) return;
+    if (!messaging) {
+      console.warn("[push] Messaging indisponível  nova OS", input.code);
+      return;
+    }
 
-    const rows = await this.tokens.findByUserIds(input.technicianIds);
+    // Todos os técnicos ativos veem as OS no app → notifica todos com dispositivo conectado.
+    const rows = await this.tokens.findForPush();
     const fcmTokens = rows.map((r) => r.token);
-    if (fcmTokens.length === 0) return;
+    if (fcmTokens.length === 0) {
+      console.warn("[push] Nenhum dispositivo de técnico  nova OS", input.code);
+      return;
+    }
+
+    console.info(
+      `[push] Nova OS ${input.code} → ${fcmTokens.length} dispositivo(s)`,
+    );
 
     const priorityLabel = priorityLabels[input.priority] ?? input.priority;
     const body = [
@@ -96,6 +110,9 @@ export class PushNotificationService {
     if (invalid.length > 0) {
       await this.tokens.removeInvalidTokens(invalid);
     }
+
+    const sent = fcmTokens.length - invalid.length;
+    console.info(`[push] Nova OS ${input.code} enviada: ${sent} ok, ${invalid.length} token(s) inválido(s)`);
   }
 
   async getAdminOverview() {

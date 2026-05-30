@@ -1,20 +1,23 @@
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  View,
-  useWindowDimensions,
-  type ViewProps,
-} from "react-native";
+import { ScrollView, StyleSheet, View, useWindowDimensions, type ViewProps } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { colors, tablet } from "@/src/constants/theme";
 
 type Props = ViewProps & {
   scroll?: boolean;
   children: React.ReactNode;
   padded?: boolean;
+  /** Abas inferiores já tratam o rodapé — padrão sem inset bottom */
+  safeEdges?: ("top" | "right" | "bottom" | "left")[];
 };
 
-export function Screen({ scroll, children, style, padded = true, ...rest }: Props) {
+export function Screen({
+  scroll,
+  children,
+  style,
+  padded = true,
+  safeEdges = ["top", "left", "right"],
+  ...rest
+}: Props) {
   const { width } = useWindowDimensions();
   const isWide = width >= 768;
   const horizontalPad = padded ? (isWide ? tablet.padding : 16) : 0;
@@ -30,7 +33,7 @@ export function Screen({ scroll, children, style, padded = true, ...rest }: Prop
 
   if (scroll) {
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={styles.safe} edges={safeEdges}>
         <ScrollView
           contentContainerStyle={styles.scroll}
           showsVerticalScrollIndicator={false}
@@ -41,7 +44,11 @@ export function Screen({ scroll, children, style, padded = true, ...rest }: Prop
     );
   }
 
-  return <SafeAreaView style={styles.safe}>{content}</SafeAreaView>;
+  return (
+    <SafeAreaView style={styles.safe} edges={safeEdges}>
+      {content}
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({

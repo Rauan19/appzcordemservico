@@ -47,7 +47,7 @@ export default function LoginScreen() {
   }
 
   return (
-    <Screen scroll padded={false}>
+    <Screen scroll padded={false} safeEdges={["top", "left", "right", "bottom"]}>
       <View style={styles.hero}>
         <View style={styles.heroDecor} />
         <View style={styles.heroDecor2} />
