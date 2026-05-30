@@ -15,10 +15,10 @@ build/
 **/.env
 **/.env.local
 
-# Firebase / credenciais
-**/google-services.json
+# Firebase / credenciais (API — nunca commitar)
 **/firebase-service-account.json
 **/*firebase*adminsdk*.json
+# google-services.json fica versionado em app/ para o EAS Build (push Android)
 
 # Docker / DB local
 zcnetconfig_pgdata/

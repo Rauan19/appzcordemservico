@@ -8,11 +8,21 @@
     "scheme": "app",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "splash": {
+        "image": "./assets/images/logozc-Photoroom.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#0B2D6B"
+      }
     },
     "android": {
       "package": "com.zcnet.config",
       "googleServicesFile": "./google-services.json",
+      "splash": {
+        "image": "./assets/images/logozc-Photoroom.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#0B2D6B"
+      },
       "permissions": [
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.VIBRATE"
@@ -45,11 +55,18 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/logozc-Photoroom.png",
+          "imageWidth": 280,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#0B2D6B"
         }
       ],
       "expo-asset"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "09c970cc-9ef2-41f8-bbf5-8490aa18f53f"
+      }
+    }
   }
 }

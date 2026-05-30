@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "710465702885",
+    "project_id": "appordemservico-12b0d",
+    "storage_bucket": "appordemservico-12b0d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:710465702885:android:751ced99311bbd7cf3bd0c",
+        "android_client_info": {
+          "package_name": "com.zcnet.config"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMNa6BUHO5TQ-Mim655zG93uHNxXGl1VM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

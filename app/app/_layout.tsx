@@ -6,6 +6,7 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
 import { AuthProvider, useAuth } from "@/src/contexts/AuthContext";
+import { AppSplash } from "@/components/brand/AppSplash";
 import { PushNotificationsSetup } from "@/src/components/PushNotificationsSetup";
 import { unregisterPushNotifications } from "@/src/services/push-notifications";
 import { colors } from "@/src/constants/theme";
@@ -47,7 +48,7 @@ export default function RootLayout() {
     if (loaded) SplashScreen.hideAsync();
   }, [loaded]);
 
-  if (!loaded) return null;
+  if (!loaded) return <AppSplash />;
 
   return (
     <AuthProvider>
