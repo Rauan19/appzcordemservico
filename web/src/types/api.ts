@@ -126,3 +126,29 @@ export type ApiError = {
   error?: string;
   message?: string;
 };
+
+export type PushDevice = {
+  id: string;
+  tokenPreview: string;
+  platform: string;
+  createdAt: string;
+  updatedAt: string;
+  user: Pick<User, "id" | "name" | "email" | "role" | "active">;
+};
+
+export type PushOverview = {
+  firebaseConfigured: boolean;
+  stats: {
+    totalDevices: number;
+    connectedTechnicians: number;
+    byPlatform: Record<string, number>;
+  };
+  devices: PushDevice[];
+};
+
+export type SendPushResult = {
+  targetedDevices: number;
+  sent: number;
+  failed: number;
+  invalidTokensRemoved: number;
+};

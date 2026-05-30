@@ -9,6 +9,7 @@ const links = [
   { to: "/products", label: "Produtos", roles: ["ADMIN", "MANAGER", "STOCK"] as const },
   { to: "/stock", label: "Estoque", roles: ["ADMIN", "MANAGER", "STOCK"] as const },
   { to: "/users", label: "Usuários", roles: ["ADMIN"] as const },
+  { to: "/push", label: "Push", roles: ["ADMIN"] as const },
 ];
 
 export function Layout() {

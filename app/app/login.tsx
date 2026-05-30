@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { brandName } from "@/src/constants/brand";
-import { ApiRequestError } from "@/src/lib/api";
+import { showErrorAlert } from "@/src/lib/errors";
 import { colors, shadows, tablet } from "@/src/constants/theme";
 
 export default function LoginScreen() {
@@ -27,12 +27,12 @@ export default function LoginScreen() {
     const trimmedPassword = password.trim();
 
     if (!trimmedEmail || !trimmedPassword) {
-      Alert.alert("Atenção", "Informe e-mail e senha.");
+      Alert.alert("Campos obrigatórios", "Preencha e-mail e senha para continuar.");
       return;
     }
 
     if (trimmedPassword.length < 4) {
-      Alert.alert("Atenção", "A senha deve ter pelo menos 4 caracteres.");
+      Alert.alert("Senha curta", "A senha deve ter pelo menos 4 caracteres.");
       return;
     }
 
@@ -40,11 +40,7 @@ export default function LoginScreen() {
     try {
       await signIn(trimmedEmail, trimmedPassword);
     } catch (err) {
-      const msg =
-        err instanceof ApiRequestError
-          ? err.message
-          : "Não foi possível conectar. Verifique a API e o IP.";
-      Alert.alert("Erro no login", msg);
+      showErrorAlert(err, "login");
     } finally {
       setLoading(false);
     }

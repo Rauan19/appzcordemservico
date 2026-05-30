@@ -49,7 +49,7 @@ Escaneie o QR Code com o **Expo Go** no tablet.
 ## Telas
 
 - **Login**  autenticação JWT
-- **Minhas OS**  lista filtrada (`assignedTo=me`)
+- **OS**  lista todas as ordens de serviço (filtro por status)
 - **Detalhe da OS**  iniciar, finalizar, baixa de material, defeito
 - **Estoque**  saldo por produto
 - **Avaliações**  nota 0–10 do cliente

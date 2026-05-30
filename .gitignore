@@ -1,4 +1,4 @@
-# Dependencies — qualquer pasta node_modules no monorepo
+# Dependencies  qualquer pasta node_modules no monorepo
 node_modules/
 **/node_modules/
 

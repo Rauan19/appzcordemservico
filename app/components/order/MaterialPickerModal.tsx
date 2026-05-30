@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { Button } from "@/components/ui/Button";
 import type { Product } from "@/src/types/api";
 import { colors, tablet } from "@/src/constants/theme";
@@ -38,7 +39,7 @@ export function MaterialPickerModal({
 }: Props) {
   const [search, setSearch] = useState("");
   const [reason, setReason] = useState(mode === "defect" ? "" : "Uso na OS");
-  const [selected, setSelected] = useState<Record<string, string>>({});
+  const [selected, setSelected] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (!visible) return;
@@ -65,20 +66,23 @@ export function MaterialPickerModal({
       if (next[product.id]) {
         delete next[product.id];
       } else {
-        next[product.id] = "1";
+        next[product.id] = 1;
       }
       return next;
     });
   }
 
-  function setQuantity(productId: string, value: string) {
-    setSelected((prev) => ({ ...prev, [productId]: value }));
+  function adjustQuantity(productId: string, delta: number) {
+    setSelected((prev) => {
+      const current = prev[productId] ?? 1;
+      const nextQty = Math.max(1, current + delta);
+      return { ...prev, [productId]: nextQty };
+    });
   }
 
   function handleConfirm() {
     const items: MaterialSelection[] = [];
-    for (const [productId, qtyStr] of Object.entries(selected)) {
-      const qty = Number(qtyStr.replace(",", "."));
+    for (const [productId, qty] of Object.entries(selected)) {
       if (qty > 0) items.push({ productId, quantity: qty });
     }
     onConfirm(items, reason);
@@ -136,14 +140,31 @@ export function MaterialPickerModal({
                   {stockLabel ? <Text style={styles.meta}>{stockLabel}</Text> : null}
                   {isSelected && (
                     <View style={styles.qtyRow} onStartShouldSetResponder={() => true}>
-                      <Text style={styles.qtyLabel}>Quantidade:</Text>
-                      <TextInput
-                        style={styles.qtyInput}
-                        value={selected[item.id]}
-                        onChangeText={(v) => setQuantity(item.id, v)}
-                        keyboardType="decimal-pad"
-                      />
-                      <Text style={styles.unit}>{item.unit}</Text>
+                      <Text style={styles.qtyLabel}>Quantidade</Text>
+                      <View style={styles.qtyControls}>
+                        <Pressable
+                          style={({ pressed }) => [
+                            styles.qtyBtn,
+                            pressed && styles.qtyBtnPressed,
+                          ]}
+                          onPress={() => adjustQuantity(item.id, -1)}
+                          hitSlop={6}
+                        >
+                          <Ionicons name="remove" size={22} color={colors.primary} />
+                        </Pressable>
+                        <Text style={styles.qtyValue}>{selected[item.id]}</Text>
+                        <Pressable
+                          style={({ pressed }) => [
+                            styles.qtyBtn,
+                            pressed && styles.qtyBtnPressed,
+                          ]}
+                          onPress={() => adjustQuantity(item.id, 1)}
+                          hitSlop={6}
+                        >
+                          <Ionicons name="add" size={22} color={colors.primary} />
+                        </Pressable>
+                        <Text style={styles.unit}>{item.unit}</Text>
+                      </View>
                     </View>
                   )}
                 </View>
@@ -234,21 +255,40 @@ const styles = StyleSheet.create({
   rowBody: { flex: 1 },
   productName: { fontSize: tablet.fontBody, fontWeight: "600", color: colors.text },
   meta: { fontSize: tablet.fontSmall, color: colors.textMuted, marginTop: 2 },
-  qtyRow: { flexDirection: "row", alignItems: "center", marginTop: 10, gap: 8 },
-  qtyLabel: { fontSize: tablet.fontSmall, color: colors.text },
-  qtyInput: {
-    minWidth: 72,
-    minHeight: 44,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    fontSize: tablet.fontBody,
-    backgroundColor: colors.background,
-    color: colors.text,
-    textAlign: "center",
+  qtyRow: { marginTop: 12, gap: 8 },
+  qtyLabel: { fontSize: tablet.fontSmall, fontWeight: "700", color: colors.text },
+  qtyControls: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
-  unit: { fontSize: tablet.fontSmall, color: colors.textMuted },
+  qtyBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+    backgroundColor: colors.surface,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  qtyBtnPressed: {
+    backgroundColor: colors.accentLight,
+    opacity: 0.9,
+  },
+  qtyValue: {
+    minWidth: 40,
+    textAlign: "center",
+    fontSize: tablet.fontTitle,
+    fontWeight: "800",
+    color: colors.primary,
+  },
+  unit: {
+    fontSize: tablet.fontSmall,
+    fontWeight: "600",
+    color: colors.textMuted,
+    marginLeft: 4,
+  },
   label: { fontSize: tablet.fontSmall, fontWeight: "600", color: colors.text, marginBottom: 8 },
   input: {
     minHeight: tablet.touchMinHeight,

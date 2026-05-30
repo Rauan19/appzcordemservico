@@ -10,6 +10,7 @@ import { ProductsPage } from "./pages/ProductsPage";
 import { StockPage } from "./pages/StockPage";
 import { UsersPage } from "./pages/UsersPage";
 import { EvaluationsPage } from "./pages/EvaluationsPage";
+import { PushPage } from "./pages/PushPage";
 
 function Protected({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="stock" element={<StockPage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="evaluations" element={<EvaluationsPage />} />
+          <Route path="push" element={<PushPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

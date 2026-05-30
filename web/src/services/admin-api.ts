@@ -5,6 +5,8 @@ import type {
   EvaluationStats,
   LoginResponse,
   Product,
+  PushOverview,
+  SendPushResult,
   ServiceOrder,
   ServiceOrderEvaluation,
   ServiceOrderStatus,
@@ -197,5 +199,21 @@ export const adminApi = {
     note?: string;
   }) {
     return api("/stock/movements", { method: "POST", body: data });
+  },
+
+  getPushOverview() {
+    return api<PushOverview>("/push/admin/overview");
+  },
+
+  sendPush(data: {
+    title: string;
+    body: string;
+    technicianIds?: string[];
+    orderId?: string;
+  }) {
+    return api<SendPushResult>("/push/admin/send", {
+      method: "POST",
+      body: data,
+    });
   },
 };

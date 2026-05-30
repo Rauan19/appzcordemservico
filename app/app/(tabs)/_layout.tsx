@@ -29,7 +29,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="orders"
         options={{
-          title: "Minhas OS",
+          title: "Ordens de serviço",
           tabBarIcon: ({ color }) => (
             <Ionicons name="clipboard-outline" size={24} color={color} />
           ),

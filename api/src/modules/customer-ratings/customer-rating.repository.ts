@@ -40,15 +40,11 @@ export class CustomerRatingRepository {
     });
   }
 
-  async listRateableOrders(technicianId: string) {
+  async listRateableOrders() {
     return prisma.serviceOrder.findMany({
       where: {
         customerRating: null,
         status: { in: ["IN_PROGRESS", "DONE"] },
-        OR: [
-          { assignedToId: technicianId },
-          { assignees: { some: { userId: technicianId } } },
-        ],
       },
       orderBy: { updatedAt: "desc" },
       select: {

@@ -23,10 +23,11 @@ export const api = {
     return apiRequest<User>("/auth/me");
   },
 
-  myOrders(status?: ServiceOrderStatus) {
-    const params = new URLSearchParams({ assignedTo: "me" });
+  listOrders(status?: ServiceOrderStatus) {
+    const params = new URLSearchParams();
     if (status) params.set("status", status);
-    return apiRequest<ServiceOrder[]>(`/service-orders?${params}`);
+    const q = params.toString();
+    return apiRequest<ServiceOrder[]>(`/service-orders${q ? `?${q}` : ""}`);
   },
 
   getOrder(id: string) {

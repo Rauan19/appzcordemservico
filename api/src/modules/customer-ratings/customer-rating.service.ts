@@ -1,25 +1,17 @@
-import { BadRequestError, ForbiddenError, NotFoundError } from "../../http/http-errors.ts";
+import { BadRequestError, NotFoundError } from "../../http/http-errors.ts";
 import { prisma } from "../../db.js";
 import { CustomerRatingRepository } from "./customer-rating.repository.ts";
 
-async function assertTechnicianOnOrder(serviceOrderId: string, technicianId: string) {
+async function loadOrderForRating(serviceOrderId: string) {
   const order = await prisma.serviceOrder.findUnique({
     where: { id: serviceOrderId },
     include: {
       customerRating: true,
-      assignees: { select: { userId: true } },
+      assignees: { select: { userId: true }, orderBy: { createdAt: "asc" } },
     },
   });
 
   if (!order) throw new NotFoundError("OS não encontrada");
-
-  const isAssigned =
-    order.assignedToId === technicianId ||
-    order.assignees.some((a) => a.userId === technicianId);
-
-  if (!isAssigned) {
-    throw new ForbiddenError("Esta OS não está atribuída a você");
-  }
 
   if (!["IN_PROGRESS", "DONE"].includes(order.status)) {
     throw new BadRequestError(
@@ -34,6 +26,13 @@ async function assertTechnicianOnOrder(serviceOrderId: string, technicianId: str
   return order;
 }
 
+function resolveRatedTechnicianId(
+  order: { assignedToId: string | null; assignees: { userId: string }[] },
+  recordedById: string,
+) {
+  return order.assignedToId ?? order.assignees[0]?.userId ?? recordedById;
+}
+
 export class CustomerRatingService {
   constructor(private readonly repo = new CustomerRatingRepository()) {}
 
@@ -41,19 +40,20 @@ export class CustomerRatingService {
     return this.repo.listByTechnician(technicianId);
   }
 
-  listRateableOrders(technicianId: string) {
-    return this.repo.listRateableOrders(technicianId);
+  listRateableOrders(_technicianId: string) {
+    return this.repo.listRateableOrders();
   }
 
   async create(
     technicianId: string,
     input: { serviceOrderId: string; rating: number; comment?: string },
   ) {
-    await assertTechnicianOnOrder(input.serviceOrderId, technicianId);
+    const order = await loadOrderForRating(input.serviceOrderId);
+    const ratedTechnicianId = resolveRatedTechnicianId(order, technicianId);
 
     return this.repo.create({
       serviceOrderId: input.serviceOrderId,
-      technicianId,
+      technicianId: ratedTechnicianId,
       rating: input.rating,
       comment: input.comment,
     });
