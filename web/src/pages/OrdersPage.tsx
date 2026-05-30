@@ -16,7 +16,7 @@ const filters: { label: string; value?: ServiceOrderStatus }[] = [
 
 export function OrdersPage() {
   const [orders, setOrders] = useState<ServiceOrder[]>([]);
-  const [filter, setFilter] = useState<ServiceOrderStatus | undefined>();
+  const [filter, setFilter] = useState<ServiceOrderStatus | undefined>("OPEN");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
