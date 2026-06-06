@@ -103,6 +103,10 @@ export class ServiceOrderService {
     return this.repo.list(filters);
   }
 
+  async getCreatedStats() {
+    return this.repo.countCreatedStats();
+  }
+
   async getById(id: string) {
     const so = await this.repo.findById(id);
     if (!so) throw new NotFoundError("OS não encontrada");

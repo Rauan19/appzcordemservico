@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { adminApi, type ListOrdersParams } from "../services/admin-api";
+import { adminApi, type ListOrdersParams, type OrderCreatedStats } from "../services/admin-api";
 import type { ServiceOrder, ServiceOrderStatus, User } from "../types/api";
 import { priorityColors, priorityOptions, statusColors, statusLabels } from "../utils/labels";
 import { PriorityBadge } from "../components/PrioritySelect";
@@ -28,8 +28,20 @@ const scheduledFilters: {
   { label: "Sem agendamento", value: "unscheduled" },
 ];
 
+const createdPeriodFilters: {
+  label: string;
+  value?: ListOrdersParams["createdPeriod"];
+  statKey: keyof OrderCreatedStats;
+}[] = [
+  { label: "Hoje", value: "day", statKey: "day" },
+  { label: "Este mês", value: "month", statKey: "month" },
+  { label: "Este ano", value: "year", statKey: "year" },
+  { label: "Total", value: undefined, statKey: "total" },
+];
+
 const defaultFilters = {
   status: "OPEN" as ServiceOrderStatus | undefined,
+  createdPeriod: "" as ListOrdersParams["createdPeriod"] | "",
   priority: "",
   technicianId: "",
   scheduled: "" as ListOrdersParams["scheduled"] | "",
@@ -41,6 +53,7 @@ const defaultFilters = {
 
 export function OrdersPage() {
   const [orders, setOrders] = useState<ServiceOrder[]>([]);
+  const [stats, setStats] = useState<OrderCreatedStats | null>(null);
   const [technicians, setTechnicians] = useState<User[]>([]);
   const [filters, setFilters] = useState(defaultFilters);
   const [searchInput, setSearchInput] = useState("");
@@ -53,6 +66,7 @@ export function OrdersPage() {
     if (filters.priority) params.priority = filters.priority;
     if (filters.technicianId) params.technicianId = filters.technicianId;
     if (filters.scheduled) params.scheduled = filters.scheduled;
+    if (filters.createdPeriod) params.createdPeriod = filters.createdPeriod;
     if (filters.q) params.q = filters.q;
     if (filters.scheduledFrom) params.scheduledFrom = filters.scheduledFrom;
     if (filters.scheduledTo) params.scheduledTo = filters.scheduledTo;
@@ -68,10 +82,15 @@ export function OrdersPage() {
     filters.scheduledFrom !== defaultFilters.scheduledFrom ||
     filters.scheduledTo !== defaultFilters.scheduledTo ||
     filters.withPppoe !== defaultFilters.withPppoe ||
+    filters.createdPeriod !== defaultFilters.createdPeriod ||
     filters.status !== defaultFilters.status;
 
   useEffect(() => {
     adminApi.listTechnicians().then(setTechnicians).catch(() => setTechnicians([]));
+    adminApi
+      .getOrderCreatedStats()
+      .then(setStats)
+      .catch(() => setStats(null));
   }, []);
 
   useEffect(() => {
@@ -116,14 +135,46 @@ export function OrdersPage() {
 
       {error ? <div className="alert alert-error">{error}</div> : null}
 
+      <div className="orders-stats-grid">
+        {createdPeriodFilters.map((f) => {
+          const active = filters.createdPeriod === (f.value ?? "");
+          const count = stats?.[f.statKey];
+          return (
+            <button
+              key={f.label}
+              type="button"
+              className={active ? "orders-stat-card active" : "orders-stat-card"}
+              onClick={() => updateFilter("createdPeriod", f.value ?? "")}
+            >
+              <span className="orders-stat-value">
+                {stats ? count : "—"}
+              </span>
+              <span className="orders-stat-label">{f.label}</span>
+              <span className="orders-stat-hint">criadas</span>
+            </button>
+          );
+        })}
+      </div>
+
       <div className="card orders-filters">
         <div className="orders-filters-header">
           <h2>Filtros</h2>
           <span className="orders-filters-meta">
-            {loading ? "Carregando…" : `${orders.length} ${orders.length === 1 ? "OS" : "OS encontradas"}`}
+            {loading
+              ? "Carregando…"
+              : `${orders.length} ${orders.length === 1 ? "OS na lista" : "OS na lista"}${
+                  filters.createdPeriod
+                    ? ` · filtro: ${
+                        createdPeriodFilters.find(
+                          (f) => (f.value ?? "") === filters.createdPeriod,
+                        )?.label ?? ""
+                      }`
+                    : ""
+                }`}
           </span>
         </div>
 
+        <div className="orders-filters-body">
         <div className="orders-search-row">
           <div className="field">
             <label>Buscar</label>
@@ -152,7 +203,7 @@ export function OrdersPage() {
           </div>
         </div>
 
-        <div className="orders-filter-group" style={{ marginTop: 12 }}>
+        <div className="orders-filter-group">
           <span>Prioridade</span>
           <div className="orders-filter-chips">
             <button
@@ -188,7 +239,7 @@ export function OrdersPage() {
           </div>
         </div>
 
-        <div className="orders-filter-group" style={{ marginTop: 12 }}>
+        <div className="orders-filter-group">
           <span>Agendamento</span>
           <div className="orders-filter-chips">
             {scheduledFilters.map((f) => (
@@ -208,7 +259,7 @@ export function OrdersPage() {
           </div>
         </div>
 
-        <div className="orders-filter-row" style={{ marginTop: 12 }}>
+        <div className="orders-filter-row">
           <div className="field">
             <label>Técnico</label>
             <select
@@ -242,6 +293,7 @@ export function OrdersPage() {
               onChange={(e) => updateFilter("scheduledTo", e.target.value)}
             />
           </div>
+        </div>
         </div>
 
         <div className="orders-filters-footer">

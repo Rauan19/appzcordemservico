@@ -5,6 +5,7 @@ export async function serviceOrderRoutes(app: FastifyInstance) {
   const controller = new ServiceOrderController();
 
   app.get("/", controller.list);
+  app.get("/stats", controller.stats);
   app.get("/:id", controller.getById);
   app.post("/", controller.create);
   app.patch("/:id/status", controller.updateStatus);

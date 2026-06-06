@@ -32,6 +32,7 @@ export class ServiceOrderController {
     if (query.technicianId) filters.technicianId = query.technicianId;
     if (query.assignedTo === "me") filters.assignedToId = user.sub;
     if (query.scheduled) filters.scheduled = query.scheduled;
+    if (query.createdPeriod) filters.createdPeriod = query.createdPeriod;
     if (query.q) filters.q = query.q;
     if (query.scheduledFrom) filters.scheduledFrom = new Date(`${query.scheduledFrom}T00:00:00.000Z`);
     if (query.scheduledTo) filters.scheduledTo = new Date(`${query.scheduledTo}T00:00:00.000Z`);
@@ -39,6 +40,11 @@ export class ServiceOrderController {
 
     const list = await this.service.list(filters);
     return reply.send(list);
+  };
+
+  stats = async (_req: FastifyRequest, reply: FastifyReply) => {
+    const stats = await this.service.getCreatedStats();
+    return reply.send(stats);
   };
 
   getById = async (req: FastifyRequest, reply: FastifyReply) => {

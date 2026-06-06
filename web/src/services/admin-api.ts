@@ -19,10 +19,18 @@ export type ListOrdersParams = {
   priority?: string;
   technicianId?: string;
   scheduled?: "today" | "scheduled" | "unscheduled" | "overdue";
+  createdPeriod?: "day" | "month" | "year";
   q?: string;
   scheduledFrom?: string;
   scheduledTo?: string;
   withPppoe?: boolean;
+};
+
+export type OrderCreatedStats = {
+  day: number;
+  month: number;
+  year: number;
+  total: number;
 };
 
 export const adminApi = {
@@ -151,12 +159,17 @@ export const adminApi = {
     if (params?.priority) q.set("priority", params.priority);
     if (params?.technicianId) q.set("technicianId", params.technicianId);
     if (params?.scheduled) q.set("scheduled", params.scheduled);
+    if (params?.createdPeriod) q.set("createdPeriod", params.createdPeriod);
     if (params?.q) q.set("q", params.q);
     if (params?.scheduledFrom) q.set("scheduledFrom", params.scheduledFrom);
     if (params?.scheduledTo) q.set("scheduledTo", params.scheduledTo);
     if (params?.withPppoe) q.set("withPppoe", "true");
     const suffix = q.toString() ? `?${q}` : "";
     return api<ServiceOrder[]>(`/service-orders${suffix}`);
+  },
+
+  getOrderCreatedStats() {
+    return api<OrderCreatedStats>("/service-orders/stats");
   },
 
   getOrder(id: string) {

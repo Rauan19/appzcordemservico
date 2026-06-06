@@ -14,12 +14,25 @@ function endOfDay(date: Date) {
   return d;
 }
 
+function startOfMonth(date: Date) {
+  const d = new Date(date.getFullYear(), date.getMonth(), 1);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function startOfYear(date: Date) {
+  const d = new Date(date.getFullYear(), 0, 1);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
 export type ListServiceOrderFilters = {
   status?: string;
   assignedToId?: string;
   priority?: string;
   technicianId?: string;
   scheduled?: "today" | "scheduled" | "unscheduled" | "overdue";
+  createdPeriod?: "day" | "month" | "year";
   q?: string;
   scheduledFrom?: Date;
   scheduledTo?: Date;
@@ -130,11 +143,39 @@ export class ServiceOrderRepository {
       });
     }
 
+    if (filters?.createdPeriod === "day") {
+      const now = new Date();
+      and.push({ createdAt: { gte: startOfDay(now), lte: endOfDay(now) } });
+    } else if (filters?.createdPeriod === "month") {
+      const now = new Date();
+      and.push({ createdAt: { gte: startOfMonth(now), lte: endOfDay(now) } });
+    } else if (filters?.createdPeriod === "year") {
+      const now = new Date();
+      and.push({ createdAt: { gte: startOfYear(now), lte: endOfDay(now) } });
+    }
+
     return prisma.serviceOrder.findMany({
       where: and.length > 0 ? { AND: and } : {},
       orderBy: { createdAt: "desc" },
       include: orderInclude,
     });
+  }
+
+  async countCreatedStats() {
+    const now = new Date();
+    const [day, month, year, total] = await Promise.all([
+      prisma.serviceOrder.count({
+        where: { createdAt: { gte: startOfDay(now), lte: endOfDay(now) } },
+      }),
+      prisma.serviceOrder.count({
+        where: { createdAt: { gte: startOfMonth(now), lte: endOfDay(now) } },
+      }),
+      prisma.serviceOrder.count({
+        where: { createdAt: { gte: startOfYear(now), lte: endOfDay(now) } },
+      }),
+      prisma.serviceOrder.count(),
+    ]);
+    return { day, month, year, total };
   }
 
   async findById(id: string) {

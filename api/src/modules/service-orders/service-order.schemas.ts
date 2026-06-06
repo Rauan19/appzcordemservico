@@ -54,6 +54,7 @@ export const ListServiceOrdersQuerySchema = z.object({
   technicianId: z.string().min(1).optional(),
   assignedTo: z.enum(["me"]).optional(),
   scheduled: z.enum(["today", "scheduled", "unscheduled", "overdue"]).optional(),
+  createdPeriod: z.enum(["day", "month", "year"]).optional(),
   q: z.string().min(1).optional(),
   scheduledFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   scheduledTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
