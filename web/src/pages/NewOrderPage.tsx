@@ -20,6 +20,8 @@ export function NewOrderPage() {
   const [assignedToIds, setAssignedToIds] = useState<string[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [scheduledAt, setScheduledAt] = useState("");
+  const [customerPppoePassword, setCustomerPppoePassword] = useState("");
   const [priority, setPriority] = useState("NORMAL");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -78,6 +80,8 @@ export function NewOrderPage() {
         title,
         description: description || undefined,
         priority,
+        scheduledAt: scheduledAt || undefined,
+        customerPppoePassword: customerPppoePassword.trim() || undefined,
       });
       navigate(`/orders/${order.id}`);
     } catch (err) {
@@ -161,6 +165,29 @@ export function NewOrderPage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
+          />
+        </div>
+
+        <div className="field">
+          <label>Data do agendamento</label>
+          <input
+            className="input-sm"
+            type="date"
+            value={scheduledAt}
+            onChange={(e) => setScheduledAt(e.target.value)}
+          />
+          <p className="field-hint">Opcional. Dia em que a OS deve ser realizada.</p>
+        </div>
+
+        <div className="field">
+          <label>Senha PPPoE do cliente</label>
+          <input
+            className="input-sm"
+            type="text"
+            value={customerPppoePassword}
+            onChange={(e) => setCustomerPppoePassword(e.target.value)}
+            placeholder="Opcional  visível para o técnico no app"
+            autoComplete="off"
           />
         </div>
 

@@ -14,6 +14,17 @@ import type {
   User,
 } from "../types/api";
 
+export type ListOrdersParams = {
+  status?: ServiceOrderStatus;
+  priority?: string;
+  technicianId?: string;
+  scheduled?: "today" | "scheduled" | "unscheduled" | "overdue";
+  q?: string;
+  scheduledFrom?: string;
+  scheduledTo?: string;
+  withPppoe?: boolean;
+};
+
 export const adminApi = {
   login(email: string, password: string) {
     return api<LoginResponse>("/auth/login", {
@@ -134,9 +145,18 @@ export const adminApi = {
     });
   },
 
-  listOrders(status?: ServiceOrderStatus) {
-    const q = status ? `?status=${status}` : "";
-    return api<ServiceOrder[]>(`/service-orders${q}`);
+  listOrders(params?: ListOrdersParams) {
+    const q = new URLSearchParams();
+    if (params?.status) q.set("status", params.status);
+    if (params?.priority) q.set("priority", params.priority);
+    if (params?.technicianId) q.set("technicianId", params.technicianId);
+    if (params?.scheduled) q.set("scheduled", params.scheduled);
+    if (params?.q) q.set("q", params.q);
+    if (params?.scheduledFrom) q.set("scheduledFrom", params.scheduledFrom);
+    if (params?.scheduledTo) q.set("scheduledTo", params.scheduledTo);
+    if (params?.withPppoe) q.set("withPppoe", "true");
+    const suffix = q.toString() ? `?${q}` : "";
+    return api<ServiceOrder[]>(`/service-orders${suffix}`);
   },
 
   getOrder(id: string) {
@@ -151,6 +171,8 @@ export const adminApi = {
     title: string;
     description?: string;
     priority?: string;
+    scheduledAt?: string;
+    customerPppoePassword?: string;
   }) {
     return api<ServiceOrder>("/service-orders", { method: "POST", body: data });
   },

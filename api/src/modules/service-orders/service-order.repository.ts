@@ -1,5 +1,30 @@
 import { prisma } from "../../db.js";
+import type { Prisma } from "@prisma/client";
 import { serviceOrderAssigneeInclude } from "./service-order.includes.ts";
+
+function startOfDay(date: Date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function endOfDay(date: Date) {
+  const d = new Date(date);
+  d.setHours(23, 59, 59, 999);
+  return d;
+}
+
+export type ListServiceOrderFilters = {
+  status?: string;
+  assignedToId?: string;
+  priority?: string;
+  technicianId?: string;
+  scheduled?: "today" | "scheduled" | "unscheduled" | "overdue";
+  q?: string;
+  scheduledFrom?: Date;
+  scheduledTo?: Date;
+  withPppoe?: boolean;
+};
 
 const orderInclude = {
   customer: true,
@@ -23,6 +48,7 @@ export class ServiceOrderRepository {
     description?: string;
     priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
     scheduledAt?: Date;
+    customerPppoePassword?: string;
   }) {
     const assigneeIds = data.assignedToIds ?? [];
     const primaryId = data.assignedToId ?? assigneeIds[0];
@@ -38,6 +64,7 @@ export class ServiceOrderRepository {
         description: data.description,
         priority: data.priority,
         scheduledAt: data.scheduledAt,
+        customerPppoePassword: data.customerPppoePassword,
         ...(assigneeIds.length > 0
           ? {
               assignees: {
@@ -50,19 +77,61 @@ export class ServiceOrderRepository {
     });
   }
 
-  async list(filters?: { status?: string; assignedToId?: string }) {
+  async list(filters?: ListServiceOrderFilters) {
+    const and: Prisma.ServiceOrderWhereInput[] = [];
+
+    if (filters?.status) and.push({ status: filters.status as never });
+    if (filters?.priority) and.push({ priority: filters.priority as never });
+
+    const technicianId = filters?.technicianId ?? filters?.assignedToId;
+    if (technicianId) {
+      and.push({
+        OR: [
+          { assignedToId: technicianId },
+          { assignees: { some: { userId: technicianId } } },
+        ],
+      });
+    }
+
+    if (filters?.scheduled === "scheduled") {
+      and.push({ scheduledAt: { not: null } });
+    } else if (filters?.scheduled === "unscheduled") {
+      and.push({ scheduledAt: null });
+    } else if (filters?.scheduled === "today") {
+      const start = startOfDay(new Date());
+      const end = endOfDay(new Date());
+      and.push({ scheduledAt: { gte: start, lte: end } });
+    } else if (filters?.scheduled === "overdue") {
+      and.push({
+        scheduledAt: { lt: startOfDay(new Date()) },
+        status: { notIn: ["DONE", "CANCELED"] },
+      });
+    }
+
+    if (filters?.scheduledFrom) {
+      and.push({ scheduledAt: { gte: startOfDay(filters.scheduledFrom) } });
+    }
+    if (filters?.scheduledTo) {
+      and.push({ scheduledAt: { lte: endOfDay(filters.scheduledTo) } });
+    }
+
+    if (filters?.withPppoe) {
+      and.push({ customerPppoePassword: { not: null } });
+    }
+
+    if (filters?.q) {
+      const q = filters.q.trim();
+      and.push({
+        OR: [
+          { code: { contains: q, mode: "insensitive" } },
+          { title: { contains: q, mode: "insensitive" } },
+          { customer: { fullName: { contains: q, mode: "insensitive" } } },
+        ],
+      });
+    }
+
     return prisma.serviceOrder.findMany({
-      where: {
-        ...(filters?.status ? { status: filters.status as never } : {}),
-        ...(filters?.assignedToId
-          ? {
-              OR: [
-                { assignedToId: filters.assignedToId },
-                { assignees: { some: { userId: filters.assignedToId } } },
-              ],
-            }
-          : {}),
-      },
+      where: and.length > 0 ? { AND: and } : {},
       orderBy: { createdAt: "desc" },
       include: orderInclude,
     });

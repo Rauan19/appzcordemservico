@@ -6,7 +6,7 @@ type Props = ViewProps & {
   scroll?: boolean;
   children: React.ReactNode;
   padded?: boolean;
-  /** Abas inferiores já tratam o rodapé — padrão sem inset bottom */
+  /** Abas inferiores já tratam o rodapé  padrão sem inset bottom */
   safeEdges?: ("top" | "right" | "bottom" | "left")[];
 };
 

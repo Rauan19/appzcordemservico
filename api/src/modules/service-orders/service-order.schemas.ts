@@ -8,7 +8,13 @@ export const CreateServiceOrderSchema = z.object({
   title: z.string().min(3),
   description: z.string().optional(),
   priority: z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]).optional(),
-  scheduledAt: z.string().datetime().optional(),
+  scheduledAt: z
+    .union([
+      z.string().datetime(),
+      z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    ])
+    .optional(),
+  customerPppoePassword: z.string().min(1).optional(),
 });
 
 export const ServiceOrderIdParamsSchema = z.object({
@@ -40,6 +46,13 @@ export const RegisterDefectSchema = z.object({
 
 export const ListServiceOrdersQuerySchema = z.object({
   status: z.enum(["OPEN", "ASSIGNED", "IN_PROGRESS", "DONE", "CANCELED"]).optional(),
+  priority: z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]).optional(),
+  technicianId: z.string().min(1).optional(),
   assignedTo: z.enum(["me"]).optional(),
+  scheduled: z.enum(["today", "scheduled", "unscheduled", "overdue"]).optional(),
+  q: z.string().min(1).optional(),
+  scheduledFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  scheduledTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  withPppoe: z.literal("true").optional(),
 });
 

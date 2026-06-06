@@ -84,6 +84,7 @@ export type ServiceOrder = {
   priority: string;
   title: string;
   description?: string | null;
+  customerPppoePassword?: string | null;
   customer?: Customer;
   address?: Address | null;
   assignedTo?: Pick<User, "id" | "name" | "email"> | null;
@@ -102,6 +103,7 @@ export type ServiceOrder = {
   scheduledAt?: string | null;
   startedAt?: string | null;
   finishedAt?: string | null;
+  createdAt?: string | null;
 };
 
 export type StockBalance = {

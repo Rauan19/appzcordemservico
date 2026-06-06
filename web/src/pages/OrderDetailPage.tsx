@@ -5,6 +5,7 @@ import type { ServiceOrder, ServiceOrderStatus } from "../types/api";
 import { statusColors, statusLabels } from "../utils/labels";
 import { PriorityBadge } from "../components/PrioritySelect";
 import { orderTechnicianNames } from "../utils/order-technicians";
+import { formatDate, formatDateTime } from "../utils/dates";
 
 const nextStatuses: Partial<Record<ServiceOrderStatus, ServiceOrderStatus[]>> = {
   OPEN: ["ASSIGNED", "IN_PROGRESS", "CANCELED"],
@@ -67,6 +68,18 @@ export function OrderDetailPage() {
 
       <div className="grid-2">
         <div className="card card-accent">
+          <h3 style={{ marginTop: 0 }}>Datas</h3>
+          <p>
+            <strong>Criada em:</strong>{" "}
+            {order.createdAt ? formatDateTime(order.createdAt) : ""}
+          </p>
+          <p>
+            <strong>Agendada para:</strong>{" "}
+            {order.scheduledAt ? formatDate(order.scheduledAt) : "Não agendada"}
+          </p>
+        </div>
+
+        <div className="card card-accent">
           <h3 style={{ marginTop: 0 }}>Status</h3>
           <span
             className="badge"
@@ -103,7 +116,15 @@ export function OrderDetailPage() {
           <p>
             <strong>{order.customer?.fullName}</strong>
           </p>
-          <p style={{ color: "var(--muted)" }}>{order.customer?.phone}</p>
+          {order.customer?.phone && (
+            <p style={{ color: "var(--muted)" }}>{order.customer.phone}</p>
+          )}
+          {order.customerPppoePassword && (
+            <p>
+              <strong>PPPoE:</strong>{" "}
+              <code>{order.customerPppoePassword}</code>
+            </p>
+          )}
           {order.address && (
             <p style={{ color: "var(--muted)" }}>
               {[order.address.street, order.address.number, order.address.city]

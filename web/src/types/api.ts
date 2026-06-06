@@ -62,6 +62,7 @@ export type ServiceOrder = {
   priority: string;
   title: string;
   description?: string | null;
+  customerPppoePassword?: string | null;
   customerId: string;
   addressId?: string | null;
   assignedToId?: string | null;
@@ -69,6 +70,7 @@ export type ServiceOrder = {
   address?: Address | null;
   assignedTo?: Pick<User, "id" | "name" | "email"> | null;
   assignees?: ServiceOrderAssignee[];
+  scheduledAt?: string | null;
   createdAt?: string;
 };
 

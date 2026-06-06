@@ -10,6 +10,7 @@ import {
   UpdateServiceOrderStatusSchema,
 } from "./service-order.schemas.ts";
 import { ServiceOrderService } from "./service-order.service.ts";
+import type { ListServiceOrderFilters } from "./service-order.repository.ts";
 
 export class ServiceOrderController {
   constructor(private readonly service = new ServiceOrderService()) {}
@@ -24,9 +25,16 @@ export class ServiceOrderController {
     const query = ListServiceOrdersQuerySchema.parse(req.query);
     const user = req.user as JwtUser;
 
-    const filters: { status?: string; assignedToId?: string } = {};
+    const filters: ListServiceOrderFilters = {};
     if (query.status) filters.status = query.status;
+    if (query.priority) filters.priority = query.priority;
+    if (query.technicianId) filters.technicianId = query.technicianId;
     if (query.assignedTo === "me") filters.assignedToId = user.sub;
+    if (query.scheduled) filters.scheduled = query.scheduled;
+    if (query.q) filters.q = query.q;
+    if (query.scheduledFrom) filters.scheduledFrom = new Date(`${query.scheduledFrom}T00:00:00.000Z`);
+    if (query.scheduledTo) filters.scheduledTo = new Date(`${query.scheduledTo}T00:00:00.000Z`);
+    if (query.withPppoe) filters.withPppoe = true;
 
     const list = await this.service.list(filters);
     return reply.send(list);

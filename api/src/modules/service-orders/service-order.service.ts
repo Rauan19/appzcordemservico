@@ -4,7 +4,7 @@ import { CustomerRepository } from "../customers/customer.repository.ts";
 import { ProductRepository } from "../products/product.repository.ts";
 import { StockRepository } from "../stock/stock.repository.ts";
 import { pushNotificationService } from "../push/push.service.ts";
-import { ServiceOrderRepository } from "./service-order.repository.ts";
+import { ServiceOrderRepository, type ListServiceOrderFilters } from "./service-order.repository.ts";
 
 function uniqueIds(ids: string[]) {
   return [...new Set(ids)];
@@ -18,6 +18,14 @@ function generateCode() {
   // Simples e único o suficiente pro MVP (pode virar sequência depois)
   const ts = Date.now().toString(36).toUpperCase();
   return `OS-${ts}`;
+}
+
+function parseScheduledAt(value?: string) {
+  if (!value) return undefined;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return new Date(`${value}T12:00:00.000Z`);
+  }
+  return new Date(value);
 }
 
 export class ServiceOrderService {
@@ -37,6 +45,7 @@ export class ServiceOrderService {
     description?: string;
     priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
     scheduledAt?: string;
+    customerPppoePassword?: string;
   }) {
     const customer = await this.customers.findById(input.customerId);
     if (!customer) throw new NotFoundError("Cliente não encontrado");
@@ -70,7 +79,8 @@ export class ServiceOrderService {
       title: input.title,
       description: input.description,
       priority: input.priority,
-      scheduledAt: input.scheduledAt ? new Date(input.scheduledAt) : undefined,
+      scheduledAt: parseScheduledAt(input.scheduledAt),
+      customerPppoePassword: input.customerPppoePassword,
     });
 
     void pushNotificationService
@@ -89,7 +99,7 @@ export class ServiceOrderService {
     return order;
   }
 
-  async list(filters?: { status?: string; assignedToId?: string }) {
+  async list(filters?: ListServiceOrderFilters) {
     return this.repo.list(filters);
   }
 

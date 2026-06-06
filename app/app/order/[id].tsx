@@ -30,6 +30,7 @@ import {
   statusLabels,
 } from "@/src/utils/status";
 import { colors, shadows, tablet } from "@/src/constants/theme";
+import { formatDate, formatDateTime } from "@/src/utils/dates";
 
 export default function OrderDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -221,7 +222,18 @@ export default function OrderDetailScreen() {
                 Prioridade {priorityLabels[order.priority] ?? order.priority}
               </Text>
             </View>
+            {order.scheduledAt ? (
+              <View style={[styles.scheduleChip, { backgroundColor: `${accent}16` }]}>
+                <Ionicons name="calendar-outline" size={13} color={accent} />
+                <Text style={[styles.scheduleText, { color: accent }]}>
+                  {formatDate(order.scheduledAt)}
+                </Text>
+              </View>
+            ) : null}
           </View>
+          {order.createdAt ? (
+            <Text style={styles.createdAtText}>Criada em {formatDateTime(order.createdAt)}</Text>
+          ) : null}
         </View>
 
         <View style={styles.content}>
@@ -233,7 +245,33 @@ export default function OrderDetailScreen() {
           <OrderDetailSection icon="person-circle-outline" title="Cliente" accent={accent}>
             <DetailInfoRow icon="person-outline" label="Nome" value={order.customer?.fullName ?? ""} />
             <DetailInfoRow icon="call-outline" label="Telefone" value={order.customer?.phone ?? ""} />
-            <DetailInfoRow icon="people-outline" label="Técnicos" value={assigneeNames} isLast />
+            {order.customerPppoePassword ? (
+              <DetailInfoRow
+                icon="key-outline"
+                label="Senha PPPoE"
+                value={order.customerPppoePassword}
+              />
+            ) : null}
+            <DetailInfoRow
+              icon="people-outline"
+              label="Técnicos"
+              value={assigneeNames}
+              isLast
+            />
+          </OrderDetailSection>
+
+          <OrderDetailSection icon="calendar-outline" title="Datas" accent={accent}>
+            <DetailInfoRow
+              icon="time-outline"
+              label="Criada em"
+              value={order.createdAt ? formatDateTime(order.createdAt) : ""}
+            />
+            <DetailInfoRow
+              icon="calendar-outline"
+              label="Agendada para"
+              value={order.scheduledAt ? formatDate(order.scheduledAt) : "Não agendada"}
+              isLast
+            />
           </OrderDetailSection>
 
           {fullAddress ? (
@@ -433,7 +471,27 @@ const styles = StyleSheet.create({
   },
   heroMeta: {
     flexDirection: "row",
+    flexWrap: "wrap",
     marginTop: 16,
+    gap: 8,
+  },
+  scheduleChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+  },
+  scheduleText: {
+    fontSize: 12,
+    fontWeight: "800",
+  },
+  createdAtText: {
+    marginTop: 10,
+    fontSize: 12,
+    color: colors.textMuted,
+    fontWeight: "600",
   },
   priorityChip: {
     flexDirection: "row",

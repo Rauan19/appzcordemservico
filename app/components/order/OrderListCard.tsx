@@ -11,6 +11,7 @@ import {
   statusLabels,
 } from "@/src/utils/status";
 import { colors, shadows, tablet } from "@/src/constants/theme";
+import { formatDate, formatDateTime } from "@/src/utils/dates";
 
 type Props = {
   order: ServiceOrder;
@@ -61,6 +62,22 @@ export function OrderListCard({ order, onPress }: Props) {
           <Text style={styles.title} numberOfLines={2}>
             {order.title}
           </Text>
+
+          {(order.scheduledAt || order.createdAt) && (
+            <View style={styles.datesRow}>
+              {order.scheduledAt ? (
+                <View style={styles.dateChip}>
+                  <Ionicons name="calendar-outline" size={12} color={accent} />
+                  <Text style={[styles.dateText, { color: accent }]}>
+                    Agendada: {formatDate(order.scheduledAt)}
+                  </Text>
+                </View>
+              ) : null}
+              {order.createdAt ? (
+                <Text style={styles.createdText}>Criada: {formatDate(order.createdAt)}</Text>
+              ) : null}
+            </View>
+          )}
 
           <View style={styles.divider} />
 
@@ -153,6 +170,29 @@ const styles = StyleSheet.create({
     color: colors.text,
     lineHeight: 26,
     letterSpacing: -0.2,
+  },
+  datesRow: {
+    marginTop: 10,
+    gap: 6,
+  },
+  dateChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    alignSelf: "flex-start",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: "rgba(255,255,255,0.72)",
+  },
+  dateText: {
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  createdText: {
+    fontSize: 11,
+    color: colors.textMuted,
+    fontWeight: "600",
   },
   divider: {
     height: 1,
