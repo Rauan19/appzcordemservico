@@ -1,17 +1,29 @@
 import { FormEvent, useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { CustomerPicker } from "../components/CustomerPicker";
 import { PrioritySelect } from "../components/PrioritySelect";
 import { TechnicianMultiPicker } from "../components/TechnicianMultiPicker";
 import { adminApi } from "../services/admin-api";
-import type { Customer, User } from "../types/api";
+import type { Customer, ServiceOrderStatus, User } from "../types/api";
+import { statusLabels } from "../utils/labels";
 import "./NewOrderPage.css";
 
-export function NewOrderPage() {
+const statusOptions: ServiceOrderStatus[] = [
+  "OPEN",
+  "ASSIGNED",
+  "IN_PROGRESS",
+  "DONE",
+  "CANCELED",
+];
+
+function toDateInputValue(iso?: string | null) {
+  if (!iso) return "";
+  return iso.slice(0, 10);
+}
+
+export function EditOrderPage() {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const presetCustomerId = searchParams.get("customerId") ?? "";
-  const fromCustomers = searchParams.get("from") === "customers" || Boolean(presetCustomerId);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [technicians, setTechnicians] = useState<User[]>([]);
   const [addresses, setAddresses] = useState<Customer["addresses"]>([]);
@@ -23,25 +35,42 @@ export function NewOrderPage() {
   const [scheduledAt, setScheduledAt] = useState("");
   const [customerPppoeUser, setCustomerPppoeUser] = useState("");
   const [customerPppoePassword, setCustomerPppoePassword] = useState("");
+  const [technicianReport, setTechnicianReport] = useState("");
   const [priority, setPriority] = useState("NORMAL");
+  const [status, setStatus] = useState<ServiceOrderStatus>("OPEN");
+  const [orderCode, setOrderCode] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    Promise.all([adminApi.listCustomers(), adminApi.listTechnicians()])
-      .then(([c, t]) => {
+    if (!id) return;
+    setLoading(true);
+    Promise.all([adminApi.getOrder(id), adminApi.listCustomers(), adminApi.listTechnicians()])
+      .then(([order, c, t]) => {
+        setOrderCode(order.code);
+        setCustomerId(order.customerId);
+        setAddressId(order.addressId ?? "");
+        setAssignedToIds(
+          order.assignees?.map((a) => a.userId) ??
+            (order.assignedToId ? [order.assignedToId] : []),
+        );
+        setTitle(order.title);
+        setDescription(order.description ?? "");
+        setScheduledAt(toDateInputValue(order.scheduledAt));
+        setCustomerPppoeUser(order.customerPppoeUser ?? "");
+        setCustomerPppoePassword(order.customerPppoePassword ?? "");
+        setTechnicianReport(order.technicianReport ?? "");
+        setPriority(order.priority);
+        setStatus(order.status);
         setCustomers(c);
         setTechnicians(t);
-        if (presetCustomerId && c.some((x) => x.id === presetCustomerId)) {
-          setCustomerId(presetCustomerId);
-          const customer = c.find((x) => x.id === presetCustomerId);
-          if (customer) {
-            setTitle(`Atendimento  ${customer.fullName}`);
-          }
-        }
+        const customer = c.find((x) => x.id === order.customerId);
+        setAddresses(customer?.addresses ?? order.customer?.addresses ?? []);
       })
-      .catch(() => setError("Erro ao carregar dados"));
-  }, [presetCustomerId]);
+      .catch((e) => setError(e instanceof Error ? e.message : "Erro ao carregar OS"))
+      .finally(() => setLoading(false));
+  }, [id]);
 
   useEffect(() => {
     if (!customerId) {
@@ -53,54 +82,57 @@ export function NewOrderPage() {
       .getCustomer(customerId)
       .then((c) => {
         setAddresses(c.addresses ?? []);
-        setAddressId(c.addresses?.[0]?.id ?? "");
+        if (!c.addresses?.some((a) => a.id === addressId)) {
+          setAddressId(c.addresses?.[0]?.id ?? "");
+        }
       })
       .catch(() => setAddresses([]));
   }, [customerId]);
 
-  function handleCustomerChange(id: string, customer: Customer) {
-    setCustomerId(id);
-    if (!title || title.startsWith("Atendimento ")) {
-      setTitle(`Atendimento  ${customer.fullName}`);
-    }
+  function handleCustomerChange(nextId: string, _customer: Customer) {
+    setCustomerId(nextId);
   }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!customerId) {
+    if (!id || !customerId) {
       setError("Selecione um cliente.");
       return;
     }
     setError("");
-    setLoading(true);
+    setSaving(true);
     try {
-      const order = await adminApi.createOrder({
+      await adminApi.updateOrder(id, {
         customerId,
-        addressId: addressId || undefined,
-        assignedToIds: assignedToIds.length > 0 ? assignedToIds : undefined,
+        addressId: addressId || null,
+        assignedToIds,
         title,
-        description: description || undefined,
+        description: description.trim() || null,
         priority,
-        scheduledAt: scheduledAt || undefined,
-        customerPppoeUser: customerPppoeUser.trim() || undefined,
-        customerPppoePassword: customerPppoePassword.trim() || undefined,
+        status,
+        scheduledAt: scheduledAt || null,
+        customerPppoeUser: customerPppoeUser.trim() || null,
+        customerPppoePassword: customerPppoePassword.trim() || null,
+        technicianReport: technicianReport.trim() || null,
       });
-      navigate(`/orders/${order.id}`);
+      navigate(`/orders/${id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao criar OS");
+      setError(err instanceof Error ? err.message : "Erro ao salvar OS");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   }
+
+  if (loading) return <div className="empty">Carregando...</div>;
 
   return (
     <div className="page">
       <div className="page-header">
         <div>
-          <h1>Nova ordem de serviço</h1>
-          <p>Preencha os dados e atribua um ou mais técnicos</p>
+          <h1>Editar OS {orderCode}</h1>
+          <p>Altere qualquer campo da ordem de serviço</p>
         </div>
-        <Link to={fromCustomers ? "/customers" : "/"} className="btn btn-secondary btn-sm">
+        <Link to={`/orders/${id}`} className="btn btn-secondary btn-sm">
           Voltar
         </Link>
       </div>
@@ -144,9 +176,23 @@ export function NewOrderPage() {
         </div>
 
         <div className="field">
+          <label>Status</label>
+          <select
+            className="input-sm"
+            value={status}
+            onChange={(e) => setStatus(e.target.value as ServiceOrderStatus)}
+          >
+            {statusOptions.map((s) => (
+              <option key={s} value={s}>
+                {statusLabels[s]}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="field">
           <label>Prioridade</label>
           <PrioritySelect value={priority} onChange={setPriority} />
-          <p className="field-hint">Urgente aparece em vermelho para o técnico no app.</p>
         </div>
 
         <div className="field">
@@ -161,12 +207,23 @@ export function NewOrderPage() {
         </div>
 
         <div className="field">
-          <label>Descrição</label>
+          <label>Descrição (abertura)</label>
           <textarea
             className="input-sm textarea-sm"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
+          />
+        </div>
+
+        <div className="field">
+          <label>Relatório do técnico</label>
+          <textarea
+            className="input-sm textarea-sm"
+            value={technicianReport}
+            onChange={(e) => setTechnicianReport(e.target.value)}
+            rows={4}
+            placeholder="Texto registrado pelo técnico no app"
           />
         </div>
 
@@ -178,7 +235,6 @@ export function NewOrderPage() {
             value={scheduledAt}
             onChange={(e) => setScheduledAt(e.target.value)}
           />
-          <p className="field-hint">Opcional. Dia em que a OS deve ser realizada.</p>
         </div>
 
         <div className="field">
@@ -188,7 +244,6 @@ export function NewOrderPage() {
             type="text"
             value={customerPppoeUser}
             onChange={(e) => setCustomerPppoeUser(e.target.value)}
-            placeholder="Opcional visível para o técnico no app"
             autoComplete="off"
           />
         </div>
@@ -200,14 +255,18 @@ export function NewOrderPage() {
             type="text"
             value={customerPppoePassword}
             onChange={(e) => setCustomerPppoePassword(e.target.value)}
-            placeholder="Opcional  visível para o técnico no app"
             autoComplete="off"
           />
         </div>
 
-        <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
-          {loading ? "Salvando..." : "Criar OS"}
-        </button>
+        <div className="card-actions">
+          <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>
+            {saving ? "Salvando..." : "Salvar alterações"}
+          </button>
+          <Link to={`/orders/${id}`} className="btn btn-secondary btn-sm">
+            Cancelar
+          </Link>
+        </div>
       </form>
     </div>
   );

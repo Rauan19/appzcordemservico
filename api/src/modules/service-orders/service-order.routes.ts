@@ -8,6 +8,8 @@ export async function serviceOrderRoutes(app: FastifyInstance) {
   app.get("/stats", controller.stats);
   app.get("/:id", controller.getById);
   app.post("/", controller.create);
+  app.patch("/:id", controller.update);
+  app.delete("/:id", controller.delete);
   app.patch("/:id/status", controller.updateStatus);
   app.patch("/:id/report", controller.updateTechnicianReport);
   app.post("/:id/items", controller.addItem);

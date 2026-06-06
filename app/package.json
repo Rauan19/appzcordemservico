@@ -30,11 +30,11 @@
     "typescript": "~5.9.2"
   },
   "scripts": {
-    "start": "expo start",
-    "start:clear": "expo start --clear",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "start": "npx --node-options=--max-old-space-size=8192 expo start",
+    "start:clear": "npx --node-options=--max-old-space-size=8192 expo start --clear",
+    "android": "npx --node-options=--max-old-space-size=8192 expo start --android",
+    "ios": "npx --node-options=--max-old-space-size=8192 expo start --ios",
+    "web": "npx --node-options=--max-old-space-size=8192 expo start --web"
   },
   "private": true
 }

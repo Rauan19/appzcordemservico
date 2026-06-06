@@ -198,6 +198,31 @@ export const adminApi = {
     });
   },
 
+  updateOrder(
+    id: string,
+    data: {
+      customerId?: string;
+      addressId?: string | null;
+      assignedToIds?: string[];
+      title?: string;
+      description?: string | null;
+      priority?: string;
+      status?: ServiceOrderStatus;
+      scheduledAt?: string | null;
+      customerPppoeUser?: string | null;
+      customerPppoePassword?: string | null;
+      technicianReport?: string | null;
+    },
+  ) {
+    return api<ServiceOrder>(`/service-orders/${id}`, { method: "PATCH", body: data });
+  },
+
+  deleteOrder(id: string) {
+    return api<{ ok: boolean; deleted: boolean }>(`/service-orders/${id}`, {
+      method: "DELETE",
+    });
+  },
+
   stockBalance() {
     return api<StockBalance[]>("/stock/balance");
   },

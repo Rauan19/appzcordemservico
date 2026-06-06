@@ -59,6 +59,7 @@ export function OrdersPage() {
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const queryParams = useMemo<ListOrdersParams>(() => {
     const params: ListOrdersParams = {};
@@ -119,6 +120,22 @@ export function OrdersPage() {
   function clearFilters() {
     setSearchInput("");
     setFilters(defaultFilters);
+  }
+
+  async function handleDelete(order: ServiceOrder) {
+    const msg = `Excluir a OS ${order.code} permanentemente?`;
+    if (!window.confirm(msg)) return;
+
+    setDeletingId(order.id);
+    setError("");
+    try {
+      await adminApi.deleteOrder(order.id);
+      setOrders((prev) => prev.filter((x) => x.id !== order.id));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erro ao excluir OS");
+    } finally {
+      setDeletingId(null);
+    }
   }
 
   return (
@@ -330,7 +347,7 @@ export function OrdersPage() {
                 <th>Criada</th>
                 <th>Agendada</th>
                 <th>Prioridade</th>
-                <th></th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -365,9 +382,22 @@ export function OrdersPage() {
                     <PriorityBadge priority={o.priority} />
                   </td>
                   <td>
-                    <Link to={`/orders/${o.id}`} className="btn btn-secondary">
-                      Abrir
-                    </Link>
+                    <div className="card-actions" style={{ flexWrap: "nowrap" }}>
+                      <Link to={`/orders/${o.id}`} className="btn btn-secondary btn-sm">
+                        Abrir
+                      </Link>
+                      <Link to={`/orders/${o.id}/edit`} className="btn btn-secondary btn-sm">
+                        Editar
+                      </Link>
+                      <button
+                        type="button"
+                        className="btn btn-danger btn-sm"
+                        disabled={deletingId === o.id}
+                        onClick={() => handleDelete(o)}
+                      >
+                        {deletingId === o.id ? "..." : "Excluir"}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

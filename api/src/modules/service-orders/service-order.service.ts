@@ -76,7 +76,7 @@ export class ServiceOrderService {
       addressId: input.addressId,
       assignedToId: assignedToIds[0],
       assignedToIds,
-      status: assignedToIds.length > 0 ? "ASSIGNED" : "OPEN",
+      status: "OPEN",
       title: input.title,
       description: input.description,
       priority: input.priority,
@@ -152,6 +152,112 @@ export class ServiceOrderService {
 
     const value = technicianReport?.trim() ? technicianReport.trim() : null;
     return this.repo.updateTechnicianReport(id, value);
+  }
+
+  async update(
+    id: string,
+    userRole: "ADMIN" | "MANAGER" | "STOCK" | "TECHNICIAN",
+    input: {
+      customerId?: string;
+      addressId?: string | null;
+      assignedToIds?: string[];
+      title?: string;
+      description?: string | null;
+      priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
+      status?: "OPEN" | "ASSIGNED" | "IN_PROGRESS" | "DONE" | "CANCELED";
+      scheduledAt?: string | null;
+      customerPppoeUser?: string | null;
+      customerPppoePassword?: string | null;
+      technicianReport?: string | null;
+    },
+  ) {
+    if (userRole !== "ADMIN" && userRole !== "MANAGER") {
+      throw new ForbiddenError("Somente admin pode editar a OS");
+    }
+
+    await this.getById(id);
+
+    if (input.customerId) {
+      const customer = await this.customers.findById(input.customerId);
+      if (!customer) throw new NotFoundError("Cliente não encontrado");
+    }
+
+    let assignedToIds: string[] | undefined;
+    if (input.assignedToIds !== undefined) {
+      assignedToIds = uniqueIds(input.assignedToIds);
+      if (assignedToIds.length > 0) {
+        const technicians = await prisma.user.findMany({
+          where: {
+            id: { in: assignedToIds },
+            role: "TECHNICIAN",
+            active: true,
+          },
+          select: { id: true },
+        });
+        if (technicians.length !== assignedToIds.length) {
+          throw new BadRequestError("Um ou mais técnicos são inválidos ou inativos");
+        }
+      }
+    }
+
+    let scheduledAt: Date | null | undefined;
+    if (input.scheduledAt === null) {
+      scheduledAt = null;
+    } else if (input.scheduledAt !== undefined) {
+      scheduledAt = parseScheduledAt(input.scheduledAt);
+    }
+
+    const description =
+      input.description === undefined
+        ? undefined
+        : input.description?.trim()
+          ? input.description.trim()
+          : null;
+
+    const technicianReport =
+      input.technicianReport === undefined
+        ? undefined
+        : input.technicianReport?.trim()
+          ? input.technicianReport.trim()
+          : null;
+
+    const customerPppoeUser =
+      input.customerPppoeUser === undefined
+        ? undefined
+        : input.customerPppoeUser?.trim()
+          ? input.customerPppoeUser.trim()
+          : null;
+
+    const customerPppoePassword =
+      input.customerPppoePassword === undefined
+        ? undefined
+        : input.customerPppoePassword?.trim()
+          ? input.customerPppoePassword.trim()
+          : null;
+
+    return this.repo.updateFull(id, {
+      customerId: input.customerId,
+      addressId: input.addressId,
+      assignedToIds,
+      title: input.title,
+      description,
+      priority: input.priority,
+      status: input.status,
+      scheduledAt,
+      customerPppoeUser,
+      customerPppoePassword,
+      technicianReport,
+    });
+  }
+
+  async delete(id: string, userRole: "ADMIN" | "MANAGER" | "STOCK" | "TECHNICIAN") {
+    if (userRole !== "ADMIN" && userRole !== "MANAGER") {
+      throw new ForbiddenError("Somente admin pode excluir a OS");
+    }
+
+    await this.getById(id);
+    await this.repo.deleteById(id);
+    return { ok: true as const, deleted: true as const };
   }
 
   async addItem(

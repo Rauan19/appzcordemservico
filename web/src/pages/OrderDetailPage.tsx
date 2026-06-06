@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { adminApi } from "../services/admin-api";
 import type { ServiceOrder, ServiceOrderStatus } from "../types/api";
 import { statusColors, statusLabels } from "../utils/labels";
@@ -15,10 +15,12 @@ const nextStatuses: Partial<Record<ServiceOrderStatus, ServiceOrderStatus[]>> = 
 
 export function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [order, setOrder] = useState<ServiceOrder | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   function load() {
     if (!id) return;
@@ -32,17 +34,34 @@ export function OrderDetailPage() {
 
   useEffect(load, [id]);
 
-  async function changeStatus(status: ServiceOrderStatus) {
+  async function changeStatus(nextStatus: ServiceOrderStatus) {
     if (!id) return;
     setUpdating(true);
     setError("");
     try {
-      await adminApi.updateOrderStatus(id, status);
+      await adminApi.updateOrderStatus(id, nextStatus);
       load();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erro ao atualizar");
     } finally {
       setUpdating(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!id || !order) return;
+    const msg = `Excluir a OS ${order.code} permanentemente?\n\nItens, avaliações e vínculos serão removidos. Movimentações de estoque ficam no histórico sem vínculo com a OS.`;
+    if (!window.confirm(msg)) return;
+
+    setDeleting(true);
+    setError("");
+    try {
+      await adminApi.deleteOrder(id);
+      navigate("/");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erro ao excluir OS");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -59,9 +78,22 @@ export function OrderDetailPage() {
           <h1>{order.code}</h1>
           <p>{order.title}</p>
         </div>
-        <Link to="/" className="btn btn-secondary">
-          Voltar
-        </Link>
+        <div className="card-actions">
+          <Link to={`/orders/${order.id}/edit`} className="btn btn-primary btn-sm">
+            Editar OS
+          </Link>
+          <button
+            type="button"
+            className="btn btn-danger btn-sm"
+            disabled={deleting}
+            onClick={handleDelete}
+          >
+            {deleting ? "Excluindo…" : "Excluir OS"}
+          </button>
+          <Link to="/" className="btn btn-secondary btn-sm">
+            Voltar
+          </Link>
+        </div>
       </div>
 
       {error ? <div className="alert alert-error">{error}</div> : null}
@@ -71,7 +103,7 @@ export function OrderDetailPage() {
           <h3 style={{ marginTop: 0 }}>Datas</h3>
           <p>
             <strong>Criada em:</strong>{" "}
-            {order.createdAt ? formatDateTime(order.createdAt) : ""}
+            {order.createdAt ? formatDateTime(order.createdAt) : "—"}
           </p>
           <p>
             <strong>Agendada para:</strong>{" "}
@@ -100,7 +132,7 @@ export function OrderDetailPage() {
                 <button
                   key={s}
                   type="button"
-                  className="btn btn-secondary"
+                  className="btn btn-secondary btn-sm"
                   disabled={updating}
                   onClick={() => changeStatus(s)}
                 >

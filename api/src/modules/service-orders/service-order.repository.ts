@@ -225,6 +225,68 @@ export class ServiceOrderRepository {
     });
   }
 
+  async updateFull(
+    id: string,
+    data: {
+      customerId?: string;
+      addressId?: string | null;
+      assignedToIds?: string[];
+      title?: string;
+      description?: string | null;
+      priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
+      status?: "OPEN" | "ASSIGNED" | "IN_PROGRESS" | "DONE" | "CANCELED";
+      scheduledAt?: Date | null;
+      customerPppoeUser?: string | null;
+      customerPppoePassword?: string | null;
+      technicianReport?: string | null;
+    },
+  ) {
+    return prisma.$transaction(async (tx) => {
+      if (data.assignedToIds !== undefined) {
+        await tx.serviceOrderTechnician.deleteMany({ where: { serviceOrderId: id } });
+        if (data.assignedToIds.length > 0) {
+          await tx.serviceOrderTechnician.createMany({
+            data: data.assignedToIds.map((userId) => ({ serviceOrderId: id, userId })),
+          });
+        }
+      }
+
+      const current = await tx.serviceOrder.findUnique({ where: { id } });
+      const now = new Date();
+
+      return tx.serviceOrder.update({
+        where: { id },
+        data: {
+          customerId: data.customerId,
+          addressId: data.addressId,
+          assignedToId:
+            data.assignedToIds !== undefined
+              ? (data.assignedToIds[0] ?? null)
+              : undefined,
+          title: data.title,
+          description: data.description,
+          priority: data.priority,
+          status: data.status,
+          scheduledAt: data.scheduledAt,
+          customerPppoeUser: data.customerPppoeUser,
+          customerPppoePassword: data.customerPppoePassword,
+          technicianReport: data.technicianReport,
+          startedAt:
+            data.status === "IN_PROGRESS" && !current?.startedAt ? now : undefined,
+          finishedAt: data.status === "DONE" ? now : undefined,
+        },
+        include: {
+          ...orderInclude,
+          items: { include: { product: true } },
+        },
+      });
+    });
+  }
+
+  async deleteById(id: string) {
+    return prisma.serviceOrder.delete({ where: { id } });
+  }
+
   async addItemWithStockOut(data: {
     serviceOrderId: string;
     productId: string;

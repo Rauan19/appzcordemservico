@@ -4,6 +4,7 @@ import { Layout } from "./components/Layout";
 import { LoginPage } from "./pages/LoginPage";
 import { OrdersPage } from "./pages/OrdersPage";
 import { NewOrderPage } from "./pages/NewOrderPage";
+import { EditOrderPage } from "./pages/EditOrderPage";
 import { OrderDetailPage } from "./pages/OrderDetailPage";
 import { CustomersPage } from "./pages/CustomersPage";
 import { ProductsPage } from "./pages/ProductsPage";
@@ -33,6 +34,7 @@ export default function App() {
         >
           <Route index element={<OrdersPage />} />
           <Route path="orders/new" element={<NewOrderPage />} />
+          <Route path="orders/:id/edit" element={<EditOrderPage />} />
           <Route path="orders/:id" element={<OrderDetailPage />} />
           <Route path="customers" element={<CustomersPage />} />
           <Route path="products" element={<ProductsPage />} />

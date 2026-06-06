@@ -7,6 +7,7 @@ import {
   ListServiceOrdersQuerySchema,
   RegisterDefectSchema,
   ServiceOrderIdParamsSchema,
+  UpdateServiceOrderSchema,
   UpdateServiceOrderStatusSchema,
   UpdateTechnicianReportSchema,
 } from "./service-order.schemas.ts";
@@ -58,6 +59,21 @@ export class ServiceOrderController {
     const { status } = UpdateServiceOrderStatusSchema.parse(req.body);
     const updated = await this.service.updateStatus(id, status);
     return reply.send(updated);
+  };
+
+  update = async (req: FastifyRequest, reply: FastifyReply) => {
+    const { id } = ServiceOrderIdParamsSchema.parse(req.params);
+    const body = UpdateServiceOrderSchema.parse(req.body);
+    const user = req.user as JwtUser;
+    const updated = await this.service.update(id, user.role, body);
+    return reply.send(updated);
+  };
+
+  delete = async (req: FastifyRequest, reply: FastifyReply) => {
+    const { id } = ServiceOrderIdParamsSchema.parse(req.params);
+    const user = req.user as JwtUser;
+    const result = await this.service.delete(id, user.role);
+    return reply.send(result);
   };
 
   updateTechnicianReport = async (req: FastifyRequest, reply: FastifyReply) => {
