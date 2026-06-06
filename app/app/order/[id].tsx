@@ -265,6 +265,13 @@ export default function OrderDetailScreen() {
           <OrderDetailSection icon="person-circle-outline" title="Cliente" accent={accent}>
             <DetailInfoRow icon="person-outline" label="Nome" value={order.customer?.fullName ?? ""} />
             <DetailInfoRow icon="call-outline" label="Telefone" value={order.customer?.phone ?? ""} />
+            {order.customerPppoeUser ? (
+              <DetailInfoRow
+                icon="person-outline"
+                label="Usuário PPPoE"
+                value={order.customerPppoeUser}
+              />
+            ) : null}
             {order.customerPppoePassword ? (
               <DetailInfoRow
                 icon="key-outline"

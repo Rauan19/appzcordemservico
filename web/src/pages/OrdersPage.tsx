@@ -303,7 +303,7 @@ export function OrdersPage() {
               checked={filters.withPppoe}
               onChange={(e) => updateFilter("withPppoe", e.target.checked)}
             />
-            Somente OS com senha PPPoE
+            Somente OS com PPPoE
           </label>
           {hasExtraFilters ? (
             <button type="button" className="btn btn-secondary btn-sm" onClick={clearFilters}>
@@ -338,7 +338,7 @@ export function OrdersPage() {
                 <tr key={o.id}>
                   <td>
                     <strong>{o.code}</strong>
-                    {o.customerPppoePassword ? (
+                    {(o.customerPppoeUser || o.customerPppoePassword) ? (
                       <div style={{ fontSize: "0.6875rem", color: "var(--muted)", marginTop: 2 }}>
                         PPPoE
                       </div>

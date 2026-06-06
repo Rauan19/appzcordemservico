@@ -61,6 +61,7 @@ export class ServiceOrderRepository {
     description?: string;
     priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
     scheduledAt?: Date;
+    customerPppoeUser?: string;
     customerPppoePassword?: string;
   }) {
     const assigneeIds = data.assignedToIds ?? [];
@@ -77,6 +78,7 @@ export class ServiceOrderRepository {
         description: data.description,
         priority: data.priority,
         scheduledAt: data.scheduledAt,
+        customerPppoeUser: data.customerPppoeUser,
         customerPppoePassword: data.customerPppoePassword,
         ...(assigneeIds.length > 0
           ? {
@@ -129,7 +131,12 @@ export class ServiceOrderRepository {
     }
 
     if (filters?.withPppoe) {
-      and.push({ customerPppoePassword: { not: null } });
+      and.push({
+        OR: [
+          { customerPppoeUser: { not: null } },
+          { customerPppoePassword: { not: null } },
+        ],
+      });
     }
 
     if (filters?.q) {

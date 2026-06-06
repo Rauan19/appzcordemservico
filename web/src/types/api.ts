@@ -63,6 +63,7 @@ export type ServiceOrder = {
   title: string;
   description?: string | null;
   technicianReport?: string | null;
+  customerPppoeUser?: string | null;
   customerPppoePassword?: string | null;
   customerId: string;
   addressId?: string | null;

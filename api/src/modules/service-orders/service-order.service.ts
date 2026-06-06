@@ -45,6 +45,7 @@ export class ServiceOrderService {
     description?: string;
     priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
     scheduledAt?: string;
+    customerPppoeUser?: string;
     customerPppoePassword?: string;
   }) {
     const customer = await this.customers.findById(input.customerId);
@@ -80,6 +81,7 @@ export class ServiceOrderService {
       description: input.description,
       priority: input.priority,
       scheduledAt: parseScheduledAt(input.scheduledAt),
+      customerPppoeUser: input.customerPppoeUser,
       customerPppoePassword: input.customerPppoePassword,
     });
 

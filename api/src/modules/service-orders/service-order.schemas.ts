@@ -14,6 +14,7 @@ export const CreateServiceOrderSchema = z.object({
       z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     ])
     .optional(),
+  customerPppoeUser: z.string().min(1).optional(),
   customerPppoePassword: z.string().min(1).optional(),
 });
 

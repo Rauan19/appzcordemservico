@@ -119,11 +119,21 @@ export function OrderDetailPage() {
           {order.customer?.phone && (
             <p style={{ color: "var(--muted)" }}>{order.customer.phone}</p>
           )}
-          {order.customerPppoePassword && (
-            <p>
-              <strong>PPPoE:</strong>{" "}
-              <code>{order.customerPppoePassword}</code>
-            </p>
+          {(order.customerPppoeUser || order.customerPppoePassword) && (
+            <>
+              {order.customerPppoeUser ? (
+                <p>
+                  <strong>Usuário PPPoE:</strong>{" "}
+                  <code>{order.customerPppoeUser}</code>
+                </p>
+              ) : null}
+              {order.customerPppoePassword ? (
+                <p>
+                  <strong>Senha PPPoE:</strong>{" "}
+                  <code>{order.customerPppoePassword}</code>
+                </p>
+              ) : null}
+            </>
           )}
           {order.address && (
             <p style={{ color: "var(--muted)" }}>

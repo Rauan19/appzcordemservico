@@ -21,6 +21,7 @@ export function NewOrderPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [scheduledAt, setScheduledAt] = useState("");
+  const [customerPppoeUser, setCustomerPppoeUser] = useState("");
   const [customerPppoePassword, setCustomerPppoePassword] = useState("");
   const [priority, setPriority] = useState("NORMAL");
   const [error, setError] = useState("");
@@ -81,6 +82,7 @@ export function NewOrderPage() {
         description: description || undefined,
         priority,
         scheduledAt: scheduledAt || undefined,
+        customerPppoeUser: customerPppoeUser.trim() || undefined,
         customerPppoePassword: customerPppoePassword.trim() || undefined,
       });
       navigate(`/orders/${order.id}`);
@@ -180,13 +182,25 @@ export function NewOrderPage() {
         </div>
 
         <div className="field">
-          <label>Senha PPPoE do cliente</label>
+          <label>Usuário PPPoE</label>
+          <input
+            className="input-sm"
+            type="text"
+            value={customerPppoeUser}
+            onChange={(e) => setCustomerPppoeUser(e.target.value)}
+            placeholder="Opcional — visível para o técnico no app"
+            autoComplete="off"
+          />
+        </div>
+
+        <div className="field">
+          <label>Senha PPPoE</label>
           <input
             className="input-sm"
             type="text"
             value={customerPppoePassword}
             onChange={(e) => setCustomerPppoePassword(e.target.value)}
-            placeholder="Opcional  visível para o técnico no app"
+            placeholder="Opcional — visível para o técnico no app"
             autoComplete="off"
           />
         </div>

@@ -185,6 +185,7 @@ export const adminApi = {
     description?: string;
     priority?: string;
     scheduledAt?: string;
+    customerPppoeUser?: string;
     customerPppoePassword?: string;
   }) {
     return api<ServiceOrder>("/service-orders", { method: "POST", body: data });
