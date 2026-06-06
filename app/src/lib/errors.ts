@@ -6,6 +6,7 @@ export type ErrorContext =
   | "loadOrders"
   | "loadOrder"
   | "updateOrderStatus"
+  | "saveTechnicianReport"
   | "orderMaterials"
   | "loadEvaluations"
   | "saveEvaluation"
@@ -33,6 +34,10 @@ const CONTEXT_DEFAULTS: Record<ErrorContext, FriendlyError> = {
   updateOrderStatus: {
     title: "Status não atualizado",
     message: "Não foi possível alterar o status da OS. Verifique e tente novamente.",
+  },
+  saveTechnicianReport: {
+    title: "Relatório não salvo",
+    message: "Não foi possível salvar o relatório do técnico. Tente novamente.",
   },
   orderMaterials: {
     title: "Operação não concluída",

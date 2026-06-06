@@ -84,6 +84,7 @@ export type ServiceOrder = {
   priority: string;
   title: string;
   description?: string | null;
+  technicianReport?: string | null;
   customerPppoePassword?: string | null;
   customer?: Customer;
   address?: Address | null;

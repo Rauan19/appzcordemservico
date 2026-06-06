@@ -25,6 +25,10 @@ export const UpdateServiceOrderStatusSchema = z.object({
   status: z.enum(["OPEN", "ASSIGNED", "IN_PROGRESS", "DONE", "CANCELED"]),
 });
 
+export const UpdateTechnicianReportSchema = z.object({
+  technicianReport: z.string().max(5000).optional().nullable(),
+});
+
 export const AddServiceOrderItemSchema = z.object({
   productId: z.string().min(1),
   quantity: z.coerce.number().positive(),

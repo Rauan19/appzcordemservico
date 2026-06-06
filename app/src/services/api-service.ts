@@ -41,6 +41,13 @@ export const api = {
     });
   },
 
+  updateTechnicianReport(orderId: string, technicianReport: string) {
+    return apiRequest<ServiceOrder>(`/service-orders/${orderId}/report`, {
+      method: "PATCH",
+      body: { technicianReport: technicianReport.trim() || null },
+    });
+  },
+
   addOrderItem(orderId: string, data: { productId: string; quantity: number; reason?: string }) {
     return apiRequest(`/service-orders/${orderId}/items`, {
       method: "POST",

@@ -166,6 +166,17 @@ export class ServiceOrderRepository {
     });
   }
 
+  async updateTechnicianReport(id: string, technicianReport: string | null) {
+    return prisma.serviceOrder.update({
+      where: { id },
+      data: { technicianReport },
+      include: {
+        ...orderInclude,
+        items: { include: { product: true } },
+      },
+    });
+  }
+
   async addItemWithStockOut(data: {
     serviceOrderId: string;
     productId: string;

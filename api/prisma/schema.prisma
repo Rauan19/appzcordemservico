@@ -112,6 +112,7 @@ model ServiceOrder {
 
   title       String
   description String?
+  technicianReport String?
   customerPppoePassword String?
   scheduledAt DateTime?
   startedAt   DateTime?

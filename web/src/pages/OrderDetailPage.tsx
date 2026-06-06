@@ -156,8 +156,20 @@ export function OrderDetailPage() {
 
       {order.description && (
         <div className="card">
-          <h3 style={{ marginTop: 0 }}>Descrição</h3>
+          <h3 style={{ marginTop: 0 }}>Descrição (abertura)</h3>
           <p>{order.description}</p>
+        </div>
+      )}
+
+      {order.technicianReport ? (
+        <div className="card card-accent">
+          <h3 style={{ marginTop: 0 }}>Relatório do técnico</h3>
+          <p style={{ whiteSpace: "pre-wrap" }}>{order.technicianReport}</p>
+        </div>
+      ) : (
+        <div className="card">
+          <h3 style={{ marginTop: 0 }}>Relatório do técnico</h3>
+          <p style={{ color: "var(--muted)" }}>Nenhum relatório registrado pelo técnico.</p>
         </div>
       )}
     </div>

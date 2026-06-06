@@ -8,6 +8,7 @@ import {
   RegisterDefectSchema,
   ServiceOrderIdParamsSchema,
   UpdateServiceOrderStatusSchema,
+  UpdateTechnicianReportSchema,
 } from "./service-order.schemas.ts";
 import { ServiceOrderService } from "./service-order.service.ts";
 import type { ListServiceOrderFilters } from "./service-order.repository.ts";
@@ -50,6 +51,18 @@ export class ServiceOrderController {
     const { id } = ServiceOrderIdParamsSchema.parse(req.params);
     const { status } = UpdateServiceOrderStatusSchema.parse(req.body);
     const updated = await this.service.updateStatus(id, status);
+    return reply.send(updated);
+  };
+
+  updateTechnicianReport = async (req: FastifyRequest, reply: FastifyReply) => {
+    const { id } = ServiceOrderIdParamsSchema.parse(req.params);
+    const { technicianReport } = UpdateTechnicianReportSchema.parse(req.body);
+    const user = req.user as JwtUser;
+    const updated = await this.service.updateTechnicianReport(
+      id,
+      user.role,
+      technicianReport,
+    );
     return reply.send(updated);
   };
 

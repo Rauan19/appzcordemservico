@@ -1,5 +1,5 @@
 import { prisma } from "../../db.js";
-import { BadRequestError, NotFoundError } from "../../http/http-errors.ts";
+import { BadRequestError, ForbiddenError, NotFoundError } from "../../http/http-errors.ts";
 import { CustomerRepository } from "../customers/customer.repository.ts";
 import { ProductRepository } from "../products/product.repository.ts";
 import { StockRepository } from "../stock/stock.repository.ts";
@@ -127,6 +127,25 @@ export class ServiceOrderService {
     }
 
     return this.repo.updateStatus(id, status);
+  }
+
+  async updateTechnicianReport(
+    id: string,
+    userRole: "ADMIN" | "MANAGER" | "STOCK" | "TECHNICIAN",
+    technicianReport?: string | null,
+  ) {
+    const so = await this.getById(id);
+
+    if (so.status === "CANCELED") {
+      throw new BadRequestError("OS cancelada não aceita relatório");
+    }
+
+    if (userRole !== "TECHNICIAN" && userRole !== "ADMIN" && userRole !== "MANAGER") {
+      throw new ForbiddenError();
+    }
+
+    const value = technicianReport?.trim() ? technicianReport.trim() : null;
+    return this.repo.updateTechnicianReport(id, value);
   }
 
   async addItem(

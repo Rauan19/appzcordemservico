@@ -4,6 +4,7 @@ import {
   Alert,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -44,6 +45,8 @@ export default function OrderDetailScreen() {
   const [pickerMode, setPickerMode] = useState<"item" | "defect">("item");
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
   const [ratingSaving, setRatingSaving] = useState(false);
+  const [reportDraft, setReportDraft] = useState("");
+  const [reportSaving, setReportSaving] = useState(false);
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -55,6 +58,7 @@ export default function OrderDetailScreen() {
         api.stockBalance(),
       ]);
       setOrder(o);
+      setReportDraft(o.technicianReport ?? "");
       setProducts(p.filter((x) => x.active));
       const map: Record<string, number> = {};
       for (const b of balances) map[b.productId] = b.balance;
@@ -117,6 +121,20 @@ export default function OrderDetailScreen() {
     }
   }
 
+  async function handleSaveReport() {
+    if (!order) return;
+    setReportSaving(true);
+    try {
+      await api.updateTechnicianReport(order.id, reportDraft);
+      await load();
+      Alert.alert("Relatório salvo", "O relatório do atendimento foi registrado nesta OS.");
+    } catch (err) {
+      showErrorAlert(err, "saveTechnicianReport");
+    } finally {
+      setReportSaving(false);
+    }
+  }
+
   async function confirmMaterials(items: MaterialSelection[], reason: string) {
     if (!order) return;
     if (items.length === 0) {
@@ -176,6 +194,8 @@ export default function OrderDetailScreen() {
   const accent = statusColors[order.status];
   const priorityColor = priorityColors[order.priority] ?? colors.textMuted;
   const canWork = order.status !== "DONE" && order.status !== "CANCELED";
+  const canEditReport = order.status !== "CANCELED";
+  const reportChanged = reportDraft.trim() !== (order.technicianReport ?? "").trim();
   const canStart = order.status === "OPEN" || order.status === "ASSIGNED";
   const canFinish = order.status === "IN_PROGRESS";
   const assigneeNames =
@@ -277,6 +297,37 @@ export default function OrderDetailScreen() {
           {fullAddress ? (
             <OrderDetailSection icon="location-outline" title="Endereço" accent={accent}>
               <DetailInfoRow icon="navigate-outline" label="Local" value={fullAddress} isLast />
+            </OrderDetailSection>
+          ) : null}
+
+          {canEditReport && (
+            <OrderDetailSection icon="document-text-outline" title="Relatório do técnico" accent={colors.info}>
+              <Text style={styles.sectionHint}>
+                Opcional. Descreva o que encontrou no local e o que foi feito no atendimento.
+              </Text>
+              <TextInput
+                style={styles.reportInput}
+                value={reportDraft}
+                onChangeText={setReportDraft}
+                placeholder="Ex.: cabo rompido no poste, troca de conector, sinal normalizado…"
+                placeholderTextColor={colors.textMuted}
+                multiline
+                textAlignVertical="top"
+              />
+              <Button
+                title="Salvar relatório"
+                variant="secondary"
+                onPress={handleSaveReport}
+                loading={reportSaving}
+                disabled={!reportChanged}
+                style={{ marginTop: 12 }}
+              />
+            </OrderDetailSection>
+          )}
+
+          {!canEditReport && order.technicianReport ? (
+            <OrderDetailSection icon="document-text-outline" title="Relatório do técnico" accent={colors.info}>
+              <Text style={styles.reportSavedText}>{order.technicianReport}</Text>
             </OrderDetailSection>
           ) : null}
 
@@ -573,6 +624,24 @@ const styles = StyleSheet.create({
     fontSize: tablet.fontSmall,
     color: colors.textMuted,
     lineHeight: 20,
+  },
+  reportInput: {
+    marginTop: 12,
+    minHeight: 120,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: tablet.fontBody,
+    color: colors.text,
+    backgroundColor: colors.background,
+    lineHeight: 22,
+  },
+  reportSavedText: {
+    fontSize: tablet.fontBody,
+    color: colors.text,
+    lineHeight: 22,
   },
   ratingBox: {
     flexDirection: "row",
