@@ -3,6 +3,7 @@ import type { JwtUser } from "../../http/auth.ts";
 import {
   CreateStockMovementSchema,
   ListStockMovementsQuerySchema,
+  SetStockBalanceSchema,
   StockBalanceQuerySchema,
 } from "./stock.schemas.ts";
 import { StockService } from "./stock.service.ts";
@@ -27,6 +28,13 @@ export class StockController {
     const { productId } = StockBalanceQuerySchema.parse(req.query);
     const bal = await this.service.balance(productId);
     return reply.send(bal);
+  };
+
+  setBalance = async (req: FastifyRequest, reply: FastifyReply) => {
+    const body = SetStockBalanceSchema.parse(req.body);
+    const user = req.user as JwtUser;
+    const result = await this.service.setProductBalance({ ...body, userId: user.sub });
+    return reply.send(result);
   };
 }
 

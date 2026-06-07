@@ -7,5 +7,6 @@ export async function stockRoutes(app: FastifyInstance) {
   app.get("/balance", controller.balance);
   app.get("/movements", controller.listMovements);
   app.post("/movements", controller.createMovement);
+  app.post("/set-balance", controller.setBalance);
 }
 

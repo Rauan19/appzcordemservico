@@ -19,3 +19,9 @@ export const ListStockMovementsQuerySchema = z.object({
   serviceOrderId: z.string().min(1).optional(),
 });
 
+export const SetStockBalanceSchema = z.object({
+  productId: z.string().min(1),
+  targetBalance: z.coerce.number().min(0),
+  reason: z.string().optional(),
+});
+

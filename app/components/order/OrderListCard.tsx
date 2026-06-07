@@ -1,5 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 import { Badge } from "@/components/ui/Badge";
 import type { ServiceOrder } from "@/src/types/api";
 import {
@@ -11,12 +20,53 @@ import {
   statusLabels,
 } from "@/src/utils/status";
 import { colors, shadows, tablet } from "@/src/constants/theme";
-import { formatDate, formatDateTime } from "@/src/utils/dates";
+import { formatDate } from "@/src/utils/dates";
 
 type Props = {
   order: ServiceOrder;
   onPress: () => void;
 };
+
+function AnimatedAlertIcon() {
+  const shake = useSharedValue(0);
+
+  useEffect(() => {
+    shake.value = withRepeat(
+      withSequence(
+        withTiming(-1, { duration: 80, easing: Easing.linear }),
+        withTiming(1, { duration: 80, easing: Easing.linear }),
+        withTiming(-1, { duration: 80, easing: Easing.linear }),
+        withTiming(1, { duration: 80, easing: Easing.linear }),
+        withTiming(0, { duration: 80, easing: Easing.linear }),
+        withTiming(0, { duration: 900 }),
+      ),
+      -1,
+    );
+  }, [shake]);
+
+  const iconStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: shake.value * 3 },
+      { rotate: `${shake.value * 14}deg` },
+    ],
+  }));
+
+  return (
+    <Animated.View style={iconStyle}>
+      <Ionicons name="alert-circle" size={18} color={colors.danger} />
+    </Animated.View>
+  );
+}
+
+function ScheduledDateBanner({ scheduledAt }: { scheduledAt: string }) {
+  return (
+    <View style={styles.scheduledBanner}>
+      <AnimatedAlertIcon />
+      <Text style={styles.scheduledLabel}>Agendada:</Text>
+      <Text style={styles.scheduledDate}>{formatDate(scheduledAt)}</Text>
+    </View>
+  );
+}
 
 function initials(name?: string) {
   if (!name) return "?";
@@ -59,25 +109,17 @@ export function OrderListCard({ order, onPress }: Props) {
             <Badge label={statusLabels[order.status]} color={accent} />
           </View>
 
+          {order.scheduledAt ? (
+            <ScheduledDateBanner scheduledAt={order.scheduledAt} />
+          ) : null}
+
           <Text style={styles.title} numberOfLines={2}>
             {order.title}
           </Text>
 
-          {(order.scheduledAt || order.createdAt) && (
-            <View style={styles.datesRow}>
-              {order.scheduledAt ? (
-                <View style={styles.dateChip}>
-                  <Ionicons name="calendar-outline" size={12} color={accent} />
-                  <Text style={[styles.dateText, { color: accent }]}>
-                    Agendada: {formatDate(order.scheduledAt)}
-                  </Text>
-                </View>
-              ) : null}
-              {order.createdAt ? (
-                <Text style={styles.createdText}>Criada: {formatDate(order.createdAt)}</Text>
-              ) : null}
-            </View>
-          )}
+          {order.createdAt ? (
+            <Text style={styles.createdText}>Criada: {formatDate(order.createdAt)}</Text>
+          ) : null}
 
           <View style={styles.divider} />
 
@@ -170,29 +212,37 @@ const styles = StyleSheet.create({
     color: colors.text,
     lineHeight: 26,
     letterSpacing: -0.2,
-  },
-  datesRow: {
     marginTop: 10,
-    gap: 6,
   },
-  dateChip: {
+  scheduledBanner: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
-    alignSelf: "flex-start",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    backgroundColor: "rgba(255,255,255,0.72)",
+    gap: 6,
+    marginTop: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: "#FFEDD5",
+    borderWidth: 1,
+    borderColor: "#FDBA74",
   },
-  dateText: {
-    fontSize: 12,
-    fontWeight: "700",
+  scheduledLabel: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: colors.warning,
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
+  },
+  scheduledDate: {
+    fontSize: 14,
+    fontWeight: "900",
+    color: colors.warning,
   },
   createdText: {
     fontSize: 11,
     color: colors.textMuted,
     fontWeight: "600",
+    marginTop: 8,
   },
   divider: {
     height: 1,

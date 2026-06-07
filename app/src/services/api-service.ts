@@ -10,6 +10,9 @@ import type {
   User,
 } from "@/src/types/api";
 
+/** Filtro da lista de OS no app */
+export type ServiceOrderListFilter = ServiceOrderStatus | "scheduled" | "all";
+
 export const api = {
   login(email: string, password: string) {
     return apiRequest<LoginResponse>("/auth/login", {
@@ -23,9 +26,15 @@ export const api = {
     return apiRequest<User>("/auth/me");
   },
 
-  listOrders(status?: ServiceOrderStatus) {
+  listOrders(filter?: ServiceOrderListFilter) {
     const params = new URLSearchParams();
-    if (status) params.set("status", status);
+    if (filter && filter !== "all") {
+      if (filter === "scheduled") {
+        params.set("scheduled", "scheduled");
+      } else {
+        params.set("status", filter);
+      }
+    }
     const q = params.toString();
     return apiRequest<ServiceOrder[]>(`/service-orders${q ? `?${q}` : ""}`);
   },

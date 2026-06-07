@@ -19,7 +19,10 @@ import { OrderStatusTimeline } from "@/components/order/OrderStatusTimeline";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Screen } from "@/components/ui/Screen";
+import { OfflineBanner } from "@/components/ui/OfflineBanner";
+import { useNetworkStatus } from "@/src/hooks/useNetworkStatus";
 import { api } from "@/src/services/api-service";
+import { loadOrderDetail } from "@/src/services/orders-offline";
 import { showErrorAlert } from "@/src/lib/errors";
 import type { Product, ServiceOrder, ServiceOrderStatus } from "@/src/types/api";
 import {
@@ -47,22 +50,21 @@ export default function OrderDetailScreen() {
   const [ratingSaving, setRatingSaving] = useState(false);
   const [reportDraft, setReportDraft] = useState("");
   const [reportSaving, setReportSaving] = useState(false);
+  const [fromCache, setFromCache] = useState(false);
+  const [syncedAt, setSyncedAt] = useState<string>();
+  const { isOnline } = useNetworkStatus();
 
   const load = useCallback(async () => {
     if (!id) return;
     setLoading(true);
     try {
-      const [o, p, balances] = await Promise.all([
-        api.getOrder(id),
-        api.listProducts(),
-        api.stockBalance(),
-      ]);
-      setOrder(o);
-      setReportDraft(o.technicianReport ?? "");
-      setProducts(p.filter((x) => x.active));
-      const map: Record<string, number> = {};
-      for (const b of balances) map[b.productId] = b.balance;
-      setStockByProduct(map);
+      const result = await loadOrderDetail(id);
+      setOrder(result.order);
+      setReportDraft(result.order.technicianReport ?? "");
+      setProducts(result.products);
+      setStockByProduct(result.stockByProduct);
+      setFromCache(result.fromCache);
+      setSyncedAt(result.syncedAt);
     } catch (err) {
       showErrorAlert(err, "loadOrder");
       router.back();
@@ -193,8 +195,9 @@ export default function OrderDetailScreen() {
 
   const accent = statusColors[order.status];
   const priorityColor = priorityColors[order.priority] ?? colors.textMuted;
-  const canWork = order.status !== "DONE" && order.status !== "CANCELED";
-  const canEditReport = order.status !== "CANCELED";
+  const isReadOnly = fromCache || !isOnline;
+  const canWork = !isReadOnly && order.status !== "DONE" && order.status !== "CANCELED";
+  const canEditReport = !isReadOnly && order.status !== "CANCELED";
   const reportChanged = reportDraft.trim() !== (order.technicianReport ?? "").trim();
   const canStart = order.status === "OPEN" || order.status === "ASSIGNED";
   const canFinish = order.status === "IN_PROGRESS";
@@ -209,6 +212,7 @@ export default function OrderDetailScreen() {
   return (
     <>
       <Screen scroll padded={false}>
+        {isReadOnly ? <OfflineBanner syncedAt={syncedAt} /> : null}
         <View
           style={[
             styles.hero,

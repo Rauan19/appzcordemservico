@@ -44,5 +44,33 @@ export class StockService {
   async listMovements(filters?: { productId?: string; serviceOrderId?: string }) {
     return this.repo.listMovements(filters);
   }
+
+  async setProductBalance(input: {
+    productId: string;
+    targetBalance: number;
+    reason?: string;
+    userId?: string;
+  }) {
+    const product = await this.products.findById(input.productId);
+    if (!product) throw new NotFoundError("Produto não encontrado");
+
+    const current = await this.repo.balanceForProduct(input.productId);
+    const delta = input.targetBalance - current;
+
+    if (Math.abs(delta) < 0.0005) {
+      return { productId: input.productId, balance: current, adjusted: false as const };
+    }
+
+    await this.repo.createMovement({
+      type: "ADJUSTMENT",
+      productId: input.productId,
+      userId: input.userId,
+      quantity: toDecimalString(delta),
+      reason: input.reason ?? "Ajuste manual de saldo",
+    });
+
+    const balance = await this.repo.balanceForProduct(input.productId);
+    return { productId: input.productId, balance, adjusted: true as const, previousBalance: current };
+  }
 }
 

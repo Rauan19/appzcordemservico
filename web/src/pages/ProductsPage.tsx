@@ -5,12 +5,11 @@ import { ProductPicker } from "../components/ProductPicker";
 import { adminApi } from "../services/admin-api";
 import type { Product } from "../types/api";
 import "./ProductsPage.css";
-import "./ProductsPage.css";
 
 type IntakeMode = "restock" | "new";
 
 const emptyNew = { name: "", series: "", sku: "", unit: "un", quantity: "1", batchNote: "" };
-const emptyEdit = { name: "", series: "", sku: "", unit: "un", active: true };
+const emptyEdit = { name: "", series: "", sku: "", unit: "un", active: true, targetBalance: "" };
 
 export function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -133,6 +132,7 @@ export function ProductsPage() {
       sku: product.sku ?? "",
       unit: product.unit,
       active: product.active,
+      targetBalance: String(balances[product.id] ?? 0),
     });
     setError("");
     setEditOpen(true);
@@ -151,6 +151,17 @@ export function ProductsPage() {
         unit: editForm.unit,
         active: editForm.active,
       });
+
+      const targetBalance = Number(editForm.targetBalance);
+      const currentBalance = balances[editing.id] ?? 0;
+      if (!Number.isNaN(targetBalance) && targetBalance >= 0 && targetBalance !== currentBalance) {
+        await adminApi.setProductStockBalance({
+          productId: editing.id,
+          targetBalance,
+          reason: "Ajuste pelo cadastro de produtos",
+        });
+      }
+
       setEditOpen(false);
       setEditing(null);
       setSuccess("Produto atualizado.");
@@ -160,6 +171,10 @@ export function ProductsPage() {
     } finally {
       setSaving(false);
     }
+  }
+
+  function setEditTargetBalance(value: number) {
+    setEditForm((f) => ({ ...f, targetBalance: String(value) }));
   }
 
   async function handleDelete(product: Product) {
@@ -229,15 +244,27 @@ export function ProductsPage() {
                 <th>SKU</th>
                 <th>Saldo</th>
                 <th>Un.</th>
-                <th></th>
+                <th style={{ minWidth: 220 }}>Ações</th>
               </tr>
             </thead>
             <tbody>
-              {products.map((p) => (
+              {products.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="empty">
+                    Nenhum produto cadastrado.
+                  </td>
+                </tr>
+              ) : (
+              products.map((p) => (
                 <tr key={p.id} className={!p.active ? "row-inactive" : undefined}>
-                  <td>{p.name}</td>
-                  <td>{p.series ?? ""}</td>
-                  <td>{p.sku ?? ""}</td>
+                  <td>
+                    <strong>{p.name}</strong>
+                    {!p.active ? (
+                      <div style={{ fontSize: "0.75rem", color: "var(--muted)" }}>Inativo</div>
+                    ) : null}
+                  </td>
+                  <td>{p.series ?? "—"}</td>
+                  <td>{p.sku ?? "—"}</td>
                   <td>
                     <strong>{balances[p.id] ?? 0}</strong>
                   </td>
@@ -247,18 +274,22 @@ export function ProductsPage() {
                       {p.active ? (
                         <button
                           type="button"
-                          className="btn btn-primary"
+                          className="btn btn-secondary btn-sm"
                           onClick={() => openIntake("restock", p.id)}
                         >
                           Repor
                         </button>
                       ) : null}
-                      <button type="button" className="btn btn-secondary" onClick={() => openEdit(p)}>
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={() => openEdit(p)}
+                      >
                         Editar
                       </button>
                       <button
                         type="button"
-                        className="btn btn-danger"
+                        className="btn btn-danger btn-sm"
                         disabled={deletingId === p.id}
                         onClick={() => handleDelete(p)}
                       >
@@ -267,7 +298,8 @@ export function ProductsPage() {
                     </div>
                   </td>
                 </tr>
-              ))}
+              ))
+              )}
             </tbody>
           </table>
         )}
@@ -514,6 +546,37 @@ export function ProductsPage() {
             />
             Produto ativo
           </label>
+
+          <div className="field" style={{ marginTop: 16 }}>
+            <label>Saldo em estoque</label>
+            <p className="field-hint" style={{ marginTop: 0 }}>
+              Saldo atual: <strong>{editing ? balances[editing.id] ?? 0 : 0}</strong> {editForm.unit}
+            </p>
+            <div className="grid-2">
+              <div className="field" style={{ marginBottom: 0 }}>
+                <input
+                  className="input-sm"
+                  type="number"
+                  min="0"
+                  step="any"
+                  value={editForm.targetBalance}
+                  onChange={(e) => setEditForm((f) => ({ ...f, targetBalance: e.target.value }))}
+                />
+              </div>
+              <div className="table-actions" style={{ alignItems: "center" }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => setEditTargetBalance(0)}
+                >
+                  Zerar estoque
+                </button>
+              </div>
+            </div>
+            <p className="field-hint">
+              Defina o saldo desejado. Ao salvar, o sistema registra um ajuste automático.
+            </p>
+          </div>
         </form>
       </Modal>
     </div>

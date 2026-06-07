@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import type { ServiceOrderListFilter } from "@/src/services/api-service";
 import type { ServiceOrderStatus } from "@/src/types/api";
 import {
   statusBackgroundColors,
@@ -11,27 +12,43 @@ import { colors, shadows, tablet } from "@/src/constants/theme";
 export type OrderFilterOption = {
   label: string;
   shortLabel?: string;
-  value?: ServiceOrderStatus;
+  value: ServiceOrderListFilter;
   icon: keyof typeof Ionicons.glyphMap;
+  accent?: string;
+  background?: string;
 };
 
 export const orderFilterOptions: OrderFilterOption[] = [
-  { label: "Todas", shortLabel: "Todas", icon: "layers-outline" },
+  { label: "Todas", shortLabel: "Todas", value: "all", icon: "layers-outline" },
   { label: "Abertas", shortLabel: "Abertas", value: "OPEN", icon: "folder-open-outline" },
   { label: "Atribuídas", shortLabel: "Atrib.", value: "ASSIGNED", icon: "person-outline" },
   { label: "Em execução", shortLabel: "Execução", value: "IN_PROGRESS", icon: "construct-outline" },
   { label: "Finalizadas", shortLabel: "Final.", value: "DONE", icon: "checkmark-done-outline" },
+  {
+    label: "Agendadas",
+    shortLabel: "Agend.",
+    value: "scheduled",
+    icon: "calendar-outline",
+    accent: colors.warning,
+    background: "#FFEDD5",
+  },
 ];
 
+function filterLabel(filter: ServiceOrderListFilter) {
+  if (filter === "all") return "Todas";
+  if (filter === "scheduled") return "Agendadas";
+  return statusLabels[filter as ServiceOrderStatus];
+}
+
 type Props = {
-  filter?: ServiceOrderStatus;
+  filter: ServiceOrderListFilter;
   count: number;
   loading: boolean;
-  onChange: (value?: ServiceOrderStatus) => void;
+  onChange: (value: ServiceOrderListFilter) => void;
 };
 
 export function OrderFilterBar({ filter, count, loading, onChange }: Props) {
-  const activeLabel = filter ? statusLabels[filter] : "Todas";
+  const activeLabel = filterLabel(filter);
 
   return (
     <View style={styles.wrap}>
@@ -52,8 +69,12 @@ export function OrderFilterBar({ filter, count, loading, onChange }: Props) {
         >
           {orderFilterOptions.map((f) => {
             const active = filter === f.value;
-            const accent = f.value ? statusColors[f.value] : colors.primary;
-            const bg = f.value ? statusBackgroundColors[f.value] : colors.accentLight;
+            const isStatus = f.value !== "all" && f.value !== "scheduled";
+            const accent =
+              f.accent ?? (isStatus ? statusColors[f.value as ServiceOrderStatus] : colors.primary);
+            const bg =
+              f.background ??
+              (isStatus ? statusBackgroundColors[f.value as ServiceOrderStatus] : colors.accentLight);
 
             return (
               <Pressable

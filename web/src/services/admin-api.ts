@@ -262,6 +262,17 @@ export const adminApi = {
     return api("/stock/movements", { method: "POST", body: data });
   },
 
+  setProductStockBalance(data: {
+    productId: string;
+    targetBalance: number;
+    reason?: string;
+  }) {
+    return api<{ productId: string; balance: number; adjusted: boolean; previousBalance?: number }>(
+      "/stock/set-balance",
+      { method: "POST", body: data },
+    );
+  },
+
   getPushOverview() {
     return api<PushOverview>("/push/admin/overview");
   },
