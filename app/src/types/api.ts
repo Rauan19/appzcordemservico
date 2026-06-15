@@ -13,6 +13,9 @@ export type User = {
   email: string;
   role: UserRole;
   active?: boolean;
+  lastLatitude?: string | number | null;
+  lastLongitude?: string | number | null;
+  lastLocationAt?: string | null;
 };
 
 export type LoginResponse = {
@@ -35,6 +38,8 @@ export type Address = {
   district?: string | null;
   city?: string | null;
   state?: string | null;
+  latitude?: string | number | null;
+  longitude?: string | number | null;
 };
 
 export type Product = {

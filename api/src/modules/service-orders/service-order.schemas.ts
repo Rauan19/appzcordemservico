@@ -32,6 +32,11 @@ export const UpdateTechnicianReportSchema = z.object({
   technicianReport: z.string().max(5000).optional().nullable(),
 });
 
+export const UpdateAddressLocationSchema = z.object({
+  latitude: z.coerce.number().min(-90).max(90),
+  longitude: z.coerce.number().min(-180).max(180),
+});
+
 export const UpdateServiceOrderSchema = z.object({
   customerId: z.string().min(1).optional(),
   addressId: z.string().min(1).nullable().optional(),

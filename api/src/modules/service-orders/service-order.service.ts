@@ -1,6 +1,7 @@
 import { prisma } from "../../db.js";
 import { BadRequestError, ForbiddenError, NotFoundError } from "../../http/http-errors.ts";
 import { CustomerRepository } from "../customers/customer.repository.ts";
+import { AddressRepository } from "../addresses/address.repository.ts";
 import { ProductRepository } from "../products/product.repository.ts";
 import { StockRepository } from "../stock/stock.repository.ts";
 import { pushNotificationService } from "../push/push.service.ts";
@@ -32,6 +33,7 @@ export class ServiceOrderService {
   constructor(
     private readonly repo = new ServiceOrderRepository(),
     private readonly customers = new CustomerRepository(),
+    private readonly addresses = new AddressRepository(),
     private readonly products = new ProductRepository(),
     private readonly stock = new StockRepository(),
   ) {}
@@ -156,6 +158,30 @@ export class ServiceOrderService {
 
     const value = technicianReport?.trim() ? technicianReport.trim() : null;
     return this.repo.updateTechnicianReport(id, value);
+  }
+
+  async updateAddressLocation(
+    id: string,
+    userRole: "ADMIN" | "MANAGER" | "STOCK" | "TECHNICIAN",
+    latitude: number,
+    longitude: number,
+  ) {
+    if (userRole !== "TECHNICIAN" && userRole !== "ADMIN" && userRole !== "MANAGER") {
+      throw new ForbiddenError();
+    }
+
+    const so = await this.getById(id);
+
+    if (so.status === "CANCELED") {
+      throw new BadRequestError("OS cancelada não aceita atualização de localização");
+    }
+
+    if (!so.addressId) {
+      throw new BadRequestError("OS sem endereço vinculado");
+    }
+
+    await this.addresses.updateLocation(so.addressId, latitude, longitude);
+    return this.getById(id);
   }
 
   async update(

@@ -34,6 +34,12 @@ export class AuthService {
     return user;
   }
 
+  async updateMyLocation(userId: string, latitude: number, longitude: number) {
+    const user = await this.repo.findById(userId);
+    if (!user || !user.active) throw new NotFoundError("Usuário não encontrado");
+    return this.repo.updateLocation(userId, latitude, longitude);
+  }
+
   async createUser(input: {
     name: string;
     email: string;

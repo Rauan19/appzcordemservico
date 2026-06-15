@@ -9,6 +9,8 @@ export async function authRoutes(app: FastifyInstance) {
 
   app.get("/me", { onRequest: [authenticate] }, controller.me);
 
+  app.patch("/me/location", { onRequest: [authenticate] }, controller.updateMyLocation);
+
   app.post(
     "/users",
     { onRequest: [authenticate, requireRoles("ADMIN")] },

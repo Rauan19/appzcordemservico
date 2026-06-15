@@ -10,6 +10,7 @@ import {
   UpdateServiceOrderSchema,
   UpdateServiceOrderStatusSchema,
   UpdateTechnicianReportSchema,
+  UpdateAddressLocationSchema,
 } from "./service-order.schemas.ts";
 import { ServiceOrderService } from "./service-order.service.ts";
 import type { ListServiceOrderFilters } from "./service-order.repository.ts";
@@ -84,6 +85,19 @@ export class ServiceOrderController {
       id,
       user.role,
       technicianReport,
+    );
+    return reply.send(updated);
+  };
+
+  updateAddressLocation = async (req: FastifyRequest, reply: FastifyReply) => {
+    const { id } = ServiceOrderIdParamsSchema.parse(req.params);
+    const { latitude, longitude } = UpdateAddressLocationSchema.parse(req.body);
+    const user = req.user as JwtUser;
+    const updated = await this.service.updateAddressLocation(
+      id,
+      user.role,
+      latitude,
+      longitude,
     );
     return reply.send(updated);
   };

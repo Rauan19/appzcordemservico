@@ -15,6 +15,10 @@ model User {
   role      UserRole @default(TECHNICIAN)
   active    Boolean  @default(true)
 
+  lastLatitude   Decimal? @db.Decimal(10, 7)
+  lastLongitude  Decimal? @db.Decimal(10, 7)
+  lastLocationAt DateTime?
+
   serviceOrdersAssigned ServiceOrder[] @relation("serviceOrderAssignedTo")
   serviceOrderAssignments ServiceOrderTechnician[]
   evaluationsAsTechnician ServiceOrderEvaluation[] @relation("EvaluationTechnician")

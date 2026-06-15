@@ -14,6 +14,32 @@ export class AuthRepository {
         email: true,
         role: true,
         active: true,
+        lastLatitude: true,
+        lastLongitude: true,
+        lastLocationAt: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
+  async updateLocation(userId: string, latitude: number, longitude: number) {
+    return prisma.user.update({
+      where: { id: userId },
+      data: {
+        lastLatitude: latitude,
+        lastLongitude: longitude,
+        lastLocationAt: new Date(),
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        active: true,
+        lastLatitude: true,
+        lastLongitude: true,
+        lastLocationAt: true,
         createdAt: true,
         updatedAt: true,
       },

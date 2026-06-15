@@ -24,7 +24,13 @@ import { useNetworkStatus } from "@/src/hooks/useNetworkStatus";
 import { api } from "@/src/services/api-service";
 import { loadOrderDetail } from "@/src/services/orders-offline";
 import { showErrorAlert } from "@/src/lib/errors";
-import type { Product, ServiceOrder, ServiceOrderStatus } from "@/src/types/api";
+import type { Product, ServiceOrder, ServiceOrderStatus, User } from "@/src/types/api";
+import {
+  formatCoord,
+  getCurrentCoords,
+  openRouteInMaps,
+  parseCoord,
+} from "@/src/utils/location";
 import {
   priorityColors,
   priorityLabels,
@@ -52,6 +58,9 @@ export default function OrderDetailScreen() {
   const [reportSaving, setReportSaving] = useState(false);
   const [fromCache, setFromCache] = useState(false);
   const [syncedAt, setSyncedAt] = useState<string>();
+  const [technicianProfile, setTechnicianProfile] = useState<User | null>(null);
+  const [clientLocLoading, setClientLocLoading] = useState(false);
+  const [techLocLoading, setTechLocLoading] = useState(false);
   const { isOnline } = useNetworkStatus();
 
   const load = useCallback(async () => {
@@ -65,6 +74,15 @@ export default function OrderDetailScreen() {
       setStockByProduct(result.stockByProduct);
       setFromCache(result.fromCache);
       setSyncedAt(result.syncedAt);
+
+      if (!result.fromCache) {
+        try {
+          const me = await api.me();
+          setTechnicianProfile(me);
+        } catch {
+          // perfil opcional para rota
+        }
+      }
     } catch (err) {
       showErrorAlert(err, "loadOrder");
       router.back();
@@ -134,6 +152,86 @@ export default function OrderDetailScreen() {
       showErrorAlert(err, "saveTechnicianReport");
     } finally {
       setReportSaving(false);
+    }
+  }
+
+  async function handleUpdateClientLocation() {
+    if (!order) return;
+    if (fromCache || !isOnline) {
+      Alert.alert("Sem conexão", "Registre a localização do cliente apenas com internet.");
+      return;
+    }
+    if (!order.addressId) {
+      Alert.alert("Sem endereço", "Esta OS não tem endereço vinculado.");
+      return;
+    }
+
+    setClientLocLoading(true);
+    try {
+      const coords = await getCurrentCoords();
+      const updated = await api.updateOrderAddressLocation(
+        order.id,
+        coords.latitude,
+        coords.longitude,
+      );
+      setOrder(updated);
+      Alert.alert("Local salvo", "Localização do cliente atualizada no endereço.");
+    } catch (err) {
+      showErrorAlert(err, "saveLocation");
+    } finally {
+      setClientLocLoading(false);
+    }
+  }
+
+  async function handleUpdateMyLocation() {
+    if (fromCache || !isOnline) {
+      Alert.alert("Sem conexão", "Atualize sua localização apenas com internet.");
+      return;
+    }
+
+    setTechLocLoading(true);
+    try {
+      const coords = await getCurrentCoords();
+      const me = await api.updateMyLocation(coords.latitude, coords.longitude);
+      setTechnicianProfile(me);
+      Alert.alert("Local salvo", "Sua localização foi atualizada.");
+    } catch (err) {
+      showErrorAlert(err, "saveLocation");
+    } finally {
+      setTechLocLoading(false);
+    }
+  }
+
+  async function handleStartRoute() {
+    if (!order) return;
+
+    const clientLat = parseCoord(order.address?.latitude);
+    const clientLng = parseCoord(order.address?.longitude);
+    const techLat = parseCoord(technicianProfile?.lastLatitude);
+    const techLng = parseCoord(technicianProfile?.lastLongitude);
+
+    if (clientLat == null || clientLng == null) {
+      Alert.alert(
+        "Local do cliente",
+        "Registre a localização do cliente antes de iniciar a rota.",
+      );
+      return;
+    }
+    if (techLat == null || techLng == null) {
+      Alert.alert(
+        "Sua localização",
+        "Atualize sua localização antes de iniciar a rota.",
+      );
+      return;
+    }
+
+    try {
+      await openRouteInMaps(
+        { latitude: techLat, longitude: techLng },
+        { latitude: clientLat, longitude: clientLng },
+      );
+    } catch (err) {
+      showErrorAlert(err, "startRoute");
     }
   }
 
@@ -329,6 +427,45 @@ export default function OrderDetailScreen() {
               <DetailInfoRow icon="navigate-outline" label="Local" value={fullAddress} isLast />
             </OrderDetailSection>
           ) : null}
+
+          <OrderDetailSection icon="navigate-circle-outline" title="Localização GPS" accent={colors.info}>
+            <DetailInfoRow
+              icon="home-outline"
+              label="Cliente (lat, long)"
+              value={`${formatCoord(order.address?.latitude)}, ${formatCoord(order.address?.longitude)}`}
+            />
+            <DetailInfoRow
+              icon="person-outline"
+              label="Técnico (lat, long)"
+              value={`${formatCoord(technicianProfile?.lastLatitude)}, ${formatCoord(technicianProfile?.lastLongitude)}`}
+            />
+            {!fromCache && isOnline ? (
+              <>
+                <Button
+                  title="Atualizar local do cliente"
+                  variant="secondary"
+                  onPress={handleUpdateClientLocation}
+                  loading={clientLocLoading}
+                  disabled={techLocLoading || !order.addressId}
+                  style={{ marginTop: 12 }}
+                />
+                <Button
+                  title="Atualizar minha localização"
+                  variant="secondary"
+                  onPress={handleUpdateMyLocation}
+                  loading={techLocLoading}
+                  disabled={clientLocLoading}
+                  style={{ marginTop: 10 }}
+                />
+              </>
+            ) : null}
+            <Button
+              title="Iniciar rota"
+              onPress={handleStartRoute}
+              disabled={clientLocLoading || techLocLoading}
+              style={{ marginTop: 10 }}
+            />
+          </OrderDetailSection>
 
           {canEditReport && (
             <OrderDetailSection icon="document-text-outline" title="Relatório do técnico" accent={colors.info}>

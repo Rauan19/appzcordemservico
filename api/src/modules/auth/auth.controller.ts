@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { JwtUser } from "../../http/auth.ts";
 import { BadRequestError } from "../../http/http-errors.ts";
-import { CreateUserSchema, LoginSchema } from "./auth.schemas.ts";
+import { CreateUserSchema, LoginSchema, UpdateMyLocationSchema } from "./auth.schemas.ts";
 import { AuthService } from "./auth.service.ts";
 
 export class AuthController {
@@ -35,6 +35,13 @@ export class AuthController {
   me = async (req: FastifyRequest, reply: FastifyReply) => {
     const jwtUser = req.user as JwtUser;
     const user = await this.service.me(jwtUser.sub);
+    return reply.send(user);
+  };
+
+  updateMyLocation = async (req: FastifyRequest, reply: FastifyReply) => {
+    const jwtUser = req.user as JwtUser;
+    const { latitude, longitude } = UpdateMyLocationSchema.parse(req.body);
+    const user = await this.service.updateMyLocation(jwtUser.sub, latitude, longitude);
     return reply.send(user);
   };
 

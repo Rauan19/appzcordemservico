@@ -29,4 +29,11 @@ export class AddressRepository {
   async findById(id: string, customerId: string) {
     return prisma.address.findFirst({ where: { id, customerId } });
   }
+
+  async updateLocation(id: string, latitude: number, longitude: number) {
+    return prisma.address.update({
+      where: { id },
+      data: { latitude, longitude },
+    });
+  }
 }

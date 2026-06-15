@@ -7,6 +7,8 @@ export type ErrorContext =
   | "loadOrder"
   | "updateOrderStatus"
   | "saveTechnicianReport"
+  | "saveLocation"
+  | "startRoute"
   | "orderMaterials"
   | "loadEvaluations"
   | "saveEvaluation"
@@ -38,6 +40,14 @@ const CONTEXT_DEFAULTS: Record<ErrorContext, FriendlyError> = {
   saveTechnicianReport: {
     title: "Relatório não salvo",
     message: "Não foi possível salvar o relatório do técnico. Tente novamente.",
+  },
+  saveLocation: {
+    title: "Localização não salva",
+    message: "Não foi possível registrar a localização. Verifique o GPS e tente novamente.",
+  },
+  startRoute: {
+    title: "Rota não iniciada",
+    message: "Não foi possível abrir o mapa. Registre as localizações e tente de novo.",
   },
   orderMaterials: {
     title: "Operação não concluída",

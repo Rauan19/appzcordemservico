@@ -25,7 +25,9 @@
       },
       "permissions": [
         "android.permission.POST_NOTIFICATIONS",
-        "android.permission.VIBRATE"
+        "android.permission.VIBRATE",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
       ],
       "adaptiveIcon": {
         "backgroundColor": "#0B2D6B",
@@ -48,6 +50,12 @@
           "color": "#0B2D6B",
           "defaultChannel": "os_alerts",
           "sounds": []
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Precisamos da sua localização para registrar posição e iniciar rotas até o cliente."
         }
       ],
       [

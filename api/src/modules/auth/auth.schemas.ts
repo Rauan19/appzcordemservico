@@ -11,3 +11,8 @@ export const CreateUserSchema = z.object({
   password: z.string().min(6),
   role: z.enum(["ADMIN", "MANAGER", "STOCK", "TECHNICIAN"]),
 });
+
+export const UpdateMyLocationSchema = z.object({
+  latitude: z.coerce.number().min(-90).max(90),
+  longitude: z.coerce.number().min(-180).max(180),
+});

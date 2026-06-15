@@ -57,6 +57,20 @@ export const api = {
     });
   },
 
+  updateMyLocation(latitude: number, longitude: number) {
+    return apiRequest<User>("/auth/me/location", {
+      method: "PATCH",
+      body: { latitude, longitude },
+    });
+  },
+
+  updateOrderAddressLocation(orderId: string, latitude: number, longitude: number) {
+    return apiRequest<ServiceOrder>(`/service-orders/${orderId}/address-location`, {
+      method: "PATCH",
+      body: { latitude, longitude },
+    });
+  },
+
   addOrderItem(orderId: string, data: { productId: string; quantity: number; reason?: string }) {
     return apiRequest(`/service-orders/${orderId}/items`, {
       method: "POST",
