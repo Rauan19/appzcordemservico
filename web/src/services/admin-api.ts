@@ -187,6 +187,8 @@ export const adminApi = {
     scheduledAt?: string;
     customerPppoeUser?: string;
     customerPppoePassword?: string;
+    customerWifiName?: string;
+    customerWifiPassword?: string;
   }) {
     return api<ServiceOrder>("/service-orders", { method: "POST", body: data });
   },
@@ -211,6 +213,8 @@ export const adminApi = {
       scheduledAt?: string | null;
       customerPppoeUser?: string | null;
       customerPppoePassword?: string | null;
+      customerWifiName?: string | null;
+      customerWifiPassword?: string | null;
       technicianReport?: string | null;
     },
   ) {

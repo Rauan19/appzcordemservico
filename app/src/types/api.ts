@@ -87,6 +87,8 @@ export type ServiceOrder = {
   technicianReport?: string | null;
   customerPppoeUser?: string | null;
   customerPppoePassword?: string | null;
+  customerWifiName?: string | null;
+  customerWifiPassword?: string | null;
   customer?: Customer;
   address?: Address | null;
   assignedTo?: Pick<User, "id" | "name" | "email"> | null;

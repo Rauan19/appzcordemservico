@@ -23,6 +23,8 @@ export function NewOrderPage() {
   const [scheduledAt, setScheduledAt] = useState("");
   const [customerPppoeUser, setCustomerPppoeUser] = useState("");
   const [customerPppoePassword, setCustomerPppoePassword] = useState("");
+  const [customerWifiName, setCustomerWifiName] = useState("");
+  const [customerWifiPassword, setCustomerWifiPassword] = useState("");
   const [priority, setPriority] = useState("NORMAL");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -84,6 +86,8 @@ export function NewOrderPage() {
         scheduledAt: scheduledAt || undefined,
         customerPppoeUser: customerPppoeUser.trim() || undefined,
         customerPppoePassword: customerPppoePassword.trim() || undefined,
+        customerWifiName: customerWifiName.trim() || undefined,
+        customerWifiPassword: customerWifiPassword.trim() || undefined,
       });
       navigate(`/orders/${order.id}`);
     } catch (err) {
@@ -200,6 +204,30 @@ export function NewOrderPage() {
             type="text"
             value={customerPppoePassword}
             onChange={(e) => setCustomerPppoePassword(e.target.value)}
+            placeholder="Opcional  visível para o técnico no app"
+            autoComplete="off"
+          />
+        </div>
+
+        <div className="field">
+          <label>Nome do Wi-Fi</label>
+          <input
+            className="input-sm"
+            type="text"
+            value={customerWifiName}
+            onChange={(e) => setCustomerWifiName(e.target.value)}
+            placeholder="Opcional  rede Wi-Fi do cliente"
+            autoComplete="off"
+          />
+        </div>
+
+        <div className="field">
+          <label>Senha do Wi-Fi</label>
+          <input
+            className="input-sm"
+            type="text"
+            value={customerWifiPassword}
+            onChange={(e) => setCustomerWifiPassword(e.target.value)}
             placeholder="Opcional  visível para o técnico no app"
             autoComplete="off"
           />

@@ -151,8 +151,21 @@ export function OrderDetailPage() {
           {order.customer?.phone && (
             <p style={{ color: "var(--muted)" }}>{order.customer.phone}</p>
           )}
-          {(order.customerPppoeUser || order.customerPppoePassword) && (
+          {(order.customerPppoeUser ||
+            order.customerPppoePassword ||
+            order.customerWifiName ||
+            order.customerWifiPassword) && (
             <>
+              {order.customerWifiName ? (
+                <p>
+                  <strong>Nome Wi-Fi:</strong> <code>{order.customerWifiName}</code>
+                </p>
+              ) : null}
+              {order.customerWifiPassword ? (
+                <p>
+                  <strong>Senha Wi-Fi:</strong> <code>{order.customerWifiPassword}</code>
+                </p>
+              ) : null}
               {order.customerPppoeUser ? (
                 <p>
                   <strong>Usuário PPPoE:</strong>{" "}

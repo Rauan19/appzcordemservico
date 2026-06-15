@@ -35,6 +35,8 @@ export function EditOrderPage() {
   const [scheduledAt, setScheduledAt] = useState("");
   const [customerPppoeUser, setCustomerPppoeUser] = useState("");
   const [customerPppoePassword, setCustomerPppoePassword] = useState("");
+  const [customerWifiName, setCustomerWifiName] = useState("");
+  const [customerWifiPassword, setCustomerWifiPassword] = useState("");
   const [technicianReport, setTechnicianReport] = useState("");
   const [priority, setPriority] = useState("NORMAL");
   const [status, setStatus] = useState<ServiceOrderStatus>("OPEN");
@@ -60,6 +62,8 @@ export function EditOrderPage() {
         setScheduledAt(toDateInputValue(order.scheduledAt));
         setCustomerPppoeUser(order.customerPppoeUser ?? "");
         setCustomerPppoePassword(order.customerPppoePassword ?? "");
+        setCustomerWifiName(order.customerWifiName ?? "");
+        setCustomerWifiPassword(order.customerWifiPassword ?? "");
         setTechnicianReport(order.technicianReport ?? "");
         setPriority(order.priority);
         setStatus(order.status);
@@ -113,6 +117,8 @@ export function EditOrderPage() {
         scheduledAt: scheduledAt || null,
         customerPppoeUser: customerPppoeUser.trim() || null,
         customerPppoePassword: customerPppoePassword.trim() || null,
+        customerWifiName: customerWifiName.trim() || null,
+        customerWifiPassword: customerWifiPassword.trim() || null,
         technicianReport: technicianReport.trim() || null,
       });
       navigate(`/orders/${id}`);
@@ -255,6 +261,28 @@ export function EditOrderPage() {
             type="text"
             value={customerPppoePassword}
             onChange={(e) => setCustomerPppoePassword(e.target.value)}
+            autoComplete="off"
+          />
+        </div>
+
+        <div className="field">
+          <label>Nome do Wi-Fi</label>
+          <input
+            className="input-sm"
+            type="text"
+            value={customerWifiName}
+            onChange={(e) => setCustomerWifiName(e.target.value)}
+            autoComplete="off"
+          />
+        </div>
+
+        <div className="field">
+          <label>Senha do Wi-Fi</label>
+          <input
+            className="input-sm"
+            type="text"
+            value={customerWifiPassword}
+            onChange={(e) => setCustomerWifiPassword(e.target.value)}
             autoComplete="off"
           />
         </div>

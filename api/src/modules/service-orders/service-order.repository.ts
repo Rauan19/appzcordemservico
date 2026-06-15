@@ -63,6 +63,8 @@ export class ServiceOrderRepository {
     scheduledAt?: Date;
     customerPppoeUser?: string;
     customerPppoePassword?: string;
+    customerWifiName?: string;
+    customerWifiPassword?: string;
   }) {
     const assigneeIds = data.assignedToIds ?? [];
     const primaryId = data.assignedToId ?? assigneeIds[0];
@@ -80,6 +82,8 @@ export class ServiceOrderRepository {
         scheduledAt: data.scheduledAt,
         customerPppoeUser: data.customerPppoeUser,
         customerPppoePassword: data.customerPppoePassword,
+        customerWifiName: data.customerWifiName,
+        customerWifiPassword: data.customerWifiPassword,
         ...(assigneeIds.length > 0
           ? {
               assignees: {
@@ -238,6 +242,8 @@ export class ServiceOrderRepository {
       scheduledAt?: Date | null;
       customerPppoeUser?: string | null;
       customerPppoePassword?: string | null;
+      customerWifiName?: string | null;
+      customerWifiPassword?: string | null;
       technicianReport?: string | null;
     },
   ) {
@@ -270,6 +276,8 @@ export class ServiceOrderRepository {
           scheduledAt: data.scheduledAt,
           customerPppoeUser: data.customerPppoeUser,
           customerPppoePassword: data.customerPppoePassword,
+          customerWifiName: data.customerWifiName,
+          customerWifiPassword: data.customerWifiPassword,
           technicianReport: data.technicianReport,
           startedAt:
             data.status === "IN_PROGRESS" && !current?.startedAt ? now : undefined,

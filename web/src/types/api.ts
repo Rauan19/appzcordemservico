@@ -65,6 +65,8 @@ export type ServiceOrder = {
   technicianReport?: string | null;
   customerPppoeUser?: string | null;
   customerPppoePassword?: string | null;
+  customerWifiName?: string | null;
+  customerWifiPassword?: string | null;
   customerId: string;
   addressId?: string | null;
   assignedToId?: string | null;

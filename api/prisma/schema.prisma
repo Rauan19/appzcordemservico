@@ -115,6 +115,8 @@ model ServiceOrder {
   technicianReport String?
   customerPppoeUser String?
   customerPppoePassword String?
+  customerWifiName String?
+  customerWifiPassword String?
   scheduledAt DateTime?
   startedAt   DateTime?
   finishedAt  DateTime?

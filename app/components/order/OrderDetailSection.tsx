@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as Clipboard from "expo-clipboard";
 import type { ComponentProps } from "react";
-import { StyleSheet, Text, View, type ViewStyle } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View, type ViewStyle } from "react-native";
 import { colors, shadows, tablet } from "@/src/constants/theme";
 
 type IconName = ComponentProps<typeof Ionicons>["name"];
@@ -45,6 +46,42 @@ export function DetailInfoRow({
         <Text style={styles.infoLabel}>{label}</Text>
         <Text style={styles.infoValue}>{value}</Text>
       </View>
+    </View>
+  );
+}
+
+export function CopyableDetailInfoRow({
+  icon,
+  label,
+  value,
+  isLast,
+}: {
+  icon: IconName;
+  label: string;
+  value: string;
+  isLast?: boolean;
+}) {
+  async function handleCopy() {
+    await Clipboard.setStringAsync(value);
+    Alert.alert("Copiado", `${label} copiado para a área de transferência.`);
+  }
+
+  return (
+    <View style={[styles.infoRow, isLast && styles.infoRowLast]}>
+      <Ionicons name={icon} size={16} color={colors.textMuted} />
+      <View style={styles.infoText}>
+        <Text style={styles.infoLabel}>{label}</Text>
+        <Text style={styles.infoValue} selectable>
+          {value}
+        </Text>
+      </View>
+      <Pressable
+        onPress={handleCopy}
+        style={({ pressed }) => [styles.copyBtn, pressed && styles.copyBtnPressed]}
+        accessibilityLabel={`Copiar ${label}`}
+      >
+        <Ionicons name="copy-outline" size={18} color={colors.primary} />
+      </Pressable>
     </View>
   );
 }
@@ -114,5 +151,19 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: colors.text,
     lineHeight: 22,
+  },
+  copyBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.accentLight,
+    borderWidth: 1,
+    borderColor: `${colors.primary}22`,
+    marginTop: 2,
+  },
+  copyBtnPressed: {
+    opacity: 0.75,
   },
 });

@@ -47,6 +47,8 @@ export class ServiceOrderService {
     scheduledAt?: string;
     customerPppoeUser?: string;
     customerPppoePassword?: string;
+    customerWifiName?: string;
+    customerWifiPassword?: string;
   }) {
     const customer = await this.customers.findById(input.customerId);
     if (!customer) throw new NotFoundError("Cliente não encontrado");
@@ -83,6 +85,8 @@ export class ServiceOrderService {
       scheduledAt: parseScheduledAt(input.scheduledAt),
       customerPppoeUser: input.customerPppoeUser,
       customerPppoePassword: input.customerPppoePassword,
+      customerWifiName: input.customerWifiName,
+      customerWifiPassword: input.customerWifiPassword,
     });
 
     void pushNotificationService
@@ -168,6 +172,8 @@ export class ServiceOrderService {
       scheduledAt?: string | null;
       customerPppoeUser?: string | null;
       customerPppoePassword?: string | null;
+      customerWifiName?: string | null;
+      customerWifiPassword?: string | null;
       technicianReport?: string | null;
     },
   ) {
@@ -235,6 +241,20 @@ export class ServiceOrderService {
           ? input.customerPppoePassword.trim()
           : null;
 
+    const customerWifiName =
+      input.customerWifiName === undefined
+        ? undefined
+        : input.customerWifiName?.trim()
+          ? input.customerWifiName.trim()
+          : null;
+
+    const customerWifiPassword =
+      input.customerWifiPassword === undefined
+        ? undefined
+        : input.customerWifiPassword?.trim()
+          ? input.customerWifiPassword.trim()
+          : null;
+
     return this.repo.updateFull(id, {
       customerId: input.customerId,
       addressId: input.addressId,
@@ -246,6 +266,8 @@ export class ServiceOrderService {
       scheduledAt,
       customerPppoeUser,
       customerPppoePassword,
+      customerWifiName,
+      customerWifiPassword,
       technicianReport,
     });
   }

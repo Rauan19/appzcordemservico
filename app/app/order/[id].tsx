@@ -14,7 +14,7 @@ import {
   MaterialPickerModal,
   type MaterialSelection,
 } from "@/components/order/MaterialPickerModal";
-import { DetailInfoRow, OrderDetailSection } from "@/components/order/OrderDetailSection";
+import { DetailInfoRow, CopyableDetailInfoRow, OrderDetailSection } from "@/components/order/OrderDetailSection";
 import { OrderStatusTimeline } from "@/components/order/OrderStatusTimeline";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -209,6 +209,27 @@ export default function OrderDetailScreen() {
         .join(", ")
     : null;
 
+  type AccessRow = {
+    icon: "wifi-outline" | "key-outline" | "person-outline";
+    label: string;
+    value: string;
+  };
+
+  const accessRows: AccessRow[] = [
+    order.customerWifiName
+      ? { icon: "wifi-outline", label: "Nome Wi-Fi", value: order.customerWifiName }
+      : null,
+    order.customerWifiPassword
+      ? { icon: "key-outline", label: "Senha Wi-Fi", value: order.customerWifiPassword }
+      : null,
+    order.customerPppoeUser
+      ? { icon: "person-outline", label: "Usuário PPPoE", value: order.customerPppoeUser }
+      : null,
+    order.customerPppoePassword
+      ? { icon: "key-outline", label: "Senha PPPoE", value: order.customerPppoePassword }
+      : null,
+  ].filter((row): row is AccessRow => row !== null);
+
   return (
     <>
       <Screen scroll padded={false}>
@@ -268,27 +289,25 @@ export default function OrderDetailScreen() {
 
           <OrderDetailSection icon="person-circle-outline" title="Cliente" accent={accent}>
             <DetailInfoRow icon="person-outline" label="Nome" value={order.customer?.fullName ?? ""} />
-            <DetailInfoRow icon="call-outline" label="Telefone" value={order.customer?.phone ?? ""} />
-            {order.customerPppoeUser ? (
-              <DetailInfoRow
-                icon="person-outline"
-                label="Usuário PPPoE"
-                value={order.customerPppoeUser}
-              />
-            ) : null}
-            {order.customerPppoePassword ? (
-              <DetailInfoRow
-                icon="key-outline"
-                label="Senha PPPoE"
-                value={order.customerPppoePassword}
-              />
-            ) : null}
-            <DetailInfoRow
-              icon="people-outline"
-              label="Técnicos"
-              value={assigneeNames}
-              isLast
-            />
+            <DetailInfoRow icon="call-outline" label="Telefone" value={order.customer?.phone ?? ""} isLast />
+          </OrderDetailSection>
+
+          {accessRows.length > 0 ? (
+            <OrderDetailSection icon="wifi-outline" title="Wi-Fi e acesso" accent={colors.info}>
+              {accessRows.map((row, index) => (
+                <CopyableDetailInfoRow
+                  key={row.label}
+                  icon={row.icon}
+                  label={row.label}
+                  value={row.value}
+                  isLast={index === accessRows.length - 1}
+                />
+              ))}
+            </OrderDetailSection>
+          ) : null}
+
+          <OrderDetailSection icon="people-outline" title="Técnicos" accent={accent}>
+            <DetailInfoRow icon="people-outline" label="Equipe" value={assigneeNames || "Não atribuído"} isLast />
           </OrderDetailSection>
 
           <OrderDetailSection icon="calendar-outline" title="Datas" accent={accent}>

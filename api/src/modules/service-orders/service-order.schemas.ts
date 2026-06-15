@@ -16,6 +16,8 @@ export const CreateServiceOrderSchema = z.object({
     .optional(),
   customerPppoeUser: z.string().min(1).optional(),
   customerPppoePassword: z.string().min(1).optional(),
+  customerWifiName: z.string().min(1).optional(),
+  customerWifiPassword: z.string().min(1).optional(),
 });
 
 export const ServiceOrderIdParamsSchema = z.object({
@@ -47,6 +49,8 @@ export const UpdateServiceOrderSchema = z.object({
     .optional(),
   customerPppoeUser: z.string().max(200).nullable().optional(),
   customerPppoePassword: z.string().max(200).nullable().optional(),
+  customerWifiName: z.string().max(200).nullable().optional(),
+  customerWifiPassword: z.string().max(200).nullable().optional(),
   technicianReport: z.string().max(5000).nullable().optional(),
 });
 
