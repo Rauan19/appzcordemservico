@@ -27,9 +27,12 @@ type Options = {
 
 export async function api<T>(path: string, options: Options = {}): Promise<T> {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
     Accept: "application/json",
   };
+
+  if (options.body !== undefined) {
+    headers["Content-Type"] = "application/json";
+  }
 
   if (options.auth !== false) {
     const token = getToken();

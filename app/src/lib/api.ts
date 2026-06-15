@@ -21,10 +21,13 @@ type RequestOptions = {
 
 export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
     Accept: "application/json",
     "ngrok-skip-browser-warning": "1",
   };
+
+  if (options.body !== undefined) {
+    headers["Content-Type"] = "application/json";
+  }
 
   if (options.auth !== false) {
     const token = await getToken();
