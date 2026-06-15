@@ -164,7 +164,7 @@ export function OrdersPage() {
               onClick={() => updateFilter("createdPeriod", f.value ?? "")}
             >
               <span className="orders-stat-value">
-                {stats ? count : "—"}
+                {stats ? count : ""}
               </span>
               <span className="orders-stat-label">{f.label}</span>
               <span className="orders-stat-hint">criadas</span>

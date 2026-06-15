@@ -103,11 +103,19 @@ export function OrderDetailPage() {
           <h3 style={{ marginTop: 0 }}>Datas</h3>
           <p>
             <strong>Criada em:</strong>{" "}
-            {order.createdAt ? formatDateTime(order.createdAt) : "—"}
+            {order.createdAt ? formatDateTime(order.createdAt) : ""}
           </p>
           <p>
             <strong>Agendada para:</strong>{" "}
             {order.scheduledAt ? formatDate(order.scheduledAt) : "Não agendada"}
+          </p>
+          <p>
+            <strong>Início do serviço:</strong>{" "}
+            {order.startedAt ? formatDateTime(order.startedAt) : ""}
+          </p>
+          <p>
+            <strong>Finalizada em:</strong>{" "}
+            {order.finishedAt ? formatDateTime(order.finishedAt) : ""}
           </p>
         </div>
 

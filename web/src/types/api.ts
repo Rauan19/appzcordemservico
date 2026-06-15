@@ -75,6 +75,8 @@ export type ServiceOrder = {
   assignedTo?: Pick<User, "id" | "name" | "email"> | null;
   assignees?: ServiceOrderAssignee[];
   scheduledAt?: string | null;
+  startedAt?: string | null;
+  finishedAt?: string | null;
   createdAt?: string;
 };
 

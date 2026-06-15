@@ -263,8 +263,8 @@ export function ProductsPage() {
                       <div style={{ fontSize: "0.75rem", color: "var(--muted)" }}>Inativo</div>
                     ) : null}
                   </td>
-                  <td>{p.series ?? "—"}</td>
-                  <td>{p.sku ?? "—"}</td>
+                  <td>{p.series ?? ""}</td>
+                  <td>{p.sku ?? ""}</td>
                   <td>
                     <strong>{balances[p.id] ?? 0}</strong>
                   </td>

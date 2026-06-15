@@ -418,6 +418,16 @@ export default function OrderDetailScreen() {
               icon="calendar-outline"
               label="Agendada para"
               value={order.scheduledAt ? formatDate(order.scheduledAt) : "Não agendada"}
+            />
+            <DetailInfoRow
+              icon="play-outline"
+              label="Início do serviço"
+              value={order.startedAt ? formatDateTime(order.startedAt) : "Ainda não iniciado"}
+            />
+            <DetailInfoRow
+              icon="checkmark-circle-outline"
+              label="Finalizada em"
+              value={order.finishedAt ? formatDateTime(order.finishedAt) : "Ainda não finalizada"}
               isLast
             />
           </OrderDetailSection>
