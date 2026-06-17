@@ -1,0 +1,208 @@
+.signed-contract {
+  background: #fff;
+  color: #111827;
+  border: 0;
+  border-radius: 0;
+  padding: 28px;
+  box-shadow: none;
+}
+
+.signed-contract-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #111827;
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+}
+
+.signed-contract-label {
+  margin: 0 0 4px;
+  color: var(--success);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.signed-contract h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 1.2rem;
+}
+
+.signed-contract-header span,
+.signed-contract-company span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.signed-contract-company {
+  text-align: right;
+  font-size: 0.8125rem;
+}
+
+.signed-contract-parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.signed-contract-parties > div,
+.signed-contract-docs {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+}
+
+.signed-contract-parties span,
+.signature-block span,
+.signed-contract-docs h3 {
+  display: block;
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.signed-contract-parties p,
+.signature-block p {
+  margin: 2px 0;
+  font-size: 0.75rem;
+}
+
+.signed-contract-text {
+  margin: 18px 0 28px;
+}
+
+.signed-contract-text pre {
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.signed-contract-signatures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 28px;
+  margin-top: 28px;
+}
+
+.signature-block {
+  text-align: center;
+}
+
+.signature-block strong {
+  display: block;
+  min-height: 42px;
+  padding-top: 16px;
+  border-bottom: 1px solid #111827;
+}
+
+.signature-block img {
+  display: block;
+  max-width: 320px;
+  max-height: 110px;
+  object-fit: contain;
+  margin: 8px auto 4px;
+  border-bottom: 1px solid #111827;
+}
+
+.company-signature-block strong {
+  font-family: "Brush Script MT", "Segoe Script", cursive;
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.signed-contract-docs {
+  margin-top: 12px;
+}
+
+.signed-contract-doc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.signed-contract-doc-grid span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.signed-contract-doc-grid img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border: 1px solid #d1d5db;
+  border-radius: 0;
+}
+
+.signed-contract.compact {
+  padding: 12px;
+}
+
+.signed-contract.compact .signed-contract-docs {
+  display: none;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .printable-contract,
+  .printable-contract * {
+    visibility: visible;
+  }
+
+  .printable-contract {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .signed-contract {
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .signed-contract-text pre {
+    font-size: 10pt;
+  }
+
+  .signed-contract-doc-grid img {
+    height: 90px;
+  }
+}
+
+@media (max-width: 640px) {
+  .signed-contract {
+    padding: 12px;
+  }
+
+  .signed-contract-header,
+  .signed-contract-parties {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .signed-contract-company {
+    text-align: left;
+  }
+
+  .signed-contract-doc-grid {
+    grid-template-columns: 1fr;
+  }
+}

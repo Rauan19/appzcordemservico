@@ -5,6 +5,8 @@ import "./Layout.css";
 const links = [
   { to: "/", label: "Ordens de serviço", roles: ["ADMIN", "MANAGER", "STOCK"] as const },
   { to: "/customers", label: "Clientes", roles: ["ADMIN", "MANAGER"] as const },
+  { to: "/contracts", label: "Contratos", roles: ["ADMIN", "MANAGER"] as const },
+  { to: "/contract-templates", label: "Modelos de contrato", roles: ["ADMIN", "MANAGER"] as const },
   { to: "/evaluations", label: "Avaliações", roles: ["ADMIN", "MANAGER"] as const },
   { to: "/products", label: "Produtos", roles: ["ADMIN", "MANAGER", "STOCK"] as const },
   { to: "/stock", label: "Estoque", roles: ["ADMIN", "MANAGER", "STOCK"] as const },

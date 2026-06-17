@@ -1,0 +1,71 @@
+.manual-vars-card {
+  border: 2px solid var(--accent);
+  background: var(--accent-light);
+  box-shadow: none;
+}
+
+.manual-vars-card .form-section-title {
+  margin-top: 0;
+}
+
+.manual-vars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.manual-var-item {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.8fr) 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #fff;
+  font-size: 0.8125rem;
+}
+
+.manual-var-item strong {
+  color: var(--primary);
+}
+
+.manual-var-item span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.manual-var-item button {
+  border: 0;
+  background: transparent;
+  color: var(--danger);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.company-sign-card {
+  margin: 12px 0;
+  box-shadow: none;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.checkbox-row input {
+  width: auto;
+}
+
+@media (max-width: 640px) {
+  .manual-var-item {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+  }
+}

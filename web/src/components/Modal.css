@@ -23,6 +23,10 @@
   border: 1px solid var(--border);
 }
 
+.modal-panel-wide {
+  max-width: 720px;
+}
+
 .modal-header {
   display: flex;
   align-items: center;

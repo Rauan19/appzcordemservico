@@ -53,3 +53,16 @@ export async function api<T>(path: string, options: Options = {}): Promise<T> {
 
   return data;
 }
+
+export async function apiBlob(path: string): Promise<Blob> {
+  const token = getToken();
+  const headers: Record<string, string> = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${base}${path}`, { headers });
+  if (!res.ok) {
+    const data = (await res.json().catch(() => ({}))) as ApiErrorBody;
+    throw new ApiRequestError(res.status, data.error ?? "ERROR", data.message);
+  }
+  return res.blob();
+}

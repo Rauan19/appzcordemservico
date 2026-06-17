@@ -1,0 +1,95 @@
+.breadcrumb {
+  margin: 0 0 4px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.breadcrumb a {
+  color: var(--accent);
+}
+
+.contract-content-box pre.contract-content {
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  margin: 0;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.signing-link {
+  word-break: break-all;
+  font-size: 0.75rem;
+}
+
+.signing-link a {
+  color: var(--accent);
+}
+
+.review-note {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.doc-item p {
+  font-weight: 600;
+  font-size: 0.75rem;
+  margin-bottom: 6px;
+}
+
+.doc-item img,
+.signature-preview {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.doc-missing {
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
+}
+
+.edit-variable-list {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.edit-variable-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) minmax(180px, 2fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.export-doc-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.export-doc-option input {
+  width: auto;
+}
+
+@media (max-width: 720px) {
+  .edit-variable-row {
+    grid-template-columns: 1fr;
+  }
+}

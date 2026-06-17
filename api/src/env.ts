@@ -11,6 +11,11 @@ const EnvSchema = z.object({
   JWT_EXPIRES_IN: z.string().default("365d"),
   /** Origens do painel web, separadas por vírgula. Ex.: http://localhost:5555,*.zcnetprovedor.com.br */
   CORS_ORIGINS: z.string().optional(),
+  /** Pasta base para uploads locais (fotos de contrato, assinaturas) */
+  UPLOAD_DIR: z.string().default("./uploads"),
+  UPLOAD_MAX_SIZE_MB: z.coerce.number().positive().default(10),
+  /** URL pública do painel web (para gerar link de assinatura) */
+  PUBLIC_WEB_URL: z.string().optional(),
 });
 
 function parseCorsOrigins(raw?: string) {

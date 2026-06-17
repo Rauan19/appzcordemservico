@@ -16,6 +16,7 @@
   "dependencies": {
     "@fastify/cors": "^11.2.0",
     "@fastify/jwt": "^9.1.0",
+    "@fastify/multipart": "^10.0.0",
     "@prisma/client": "^6.17.1",
     "@scalar/fastify-api-reference": "^1.36.2",
     "bcryptjs": "^3.0.3",

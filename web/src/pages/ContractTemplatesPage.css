@@ -1,0 +1,14 @@
+.template-content-area {
+  min-height: 220px;
+  font-family: inherit;
+  line-height: 1.45;
+}
+
+.template-content-area:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
+
+.field .template-vars + .template-content-area {
+  margin-top: 4px;
+}

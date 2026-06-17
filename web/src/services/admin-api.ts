@@ -1,5 +1,7 @@
-import { api } from "../lib/api";
 import type {
+  Contract,
+  ContractStatus,
+  ContractTemplate,
   Customer,
   EvaluableOrder,
   EvaluationStats,
@@ -13,6 +15,7 @@ import type {
   StockBalance,
   User,
 } from "../types/api";
+import { api, apiBlob } from "../lib/api";
 
 export type ListOrdersParams = {
   status?: ServiceOrderStatus;
@@ -291,5 +294,88 @@ export const adminApi = {
       method: "POST",
       body: data,
     });
+  },
+
+  listContractTemplates(activeOnly = false) {
+    const q = activeOnly ? "?active=true" : "";
+    return api<ContractTemplate[]>(`/contract-templates${q}`);
+  },
+
+  getContractTemplate(id: string) {
+    return api<ContractTemplate>(`/contract-templates/${id}`);
+  },
+
+  createContractTemplate(data: { name: string; content: string; active?: boolean }) {
+    return api<ContractTemplate>("/contract-templates", { method: "POST", body: data });
+  },
+
+  updateContractTemplate(
+    id: string,
+    data: { name?: string; content?: string; active?: boolean },
+  ) {
+    return api<ContractTemplate>(`/contract-templates/${id}`, { method: "PATCH", body: data });
+  },
+
+  listContracts(params?: { status?: ContractStatus; customerId?: string; q?: string }) {
+    const search = new URLSearchParams();
+    if (params?.status) search.set("status", params.status);
+    if (params?.customerId) search.set("customerId", params.customerId);
+    if (params?.q) search.set("q", params.q);
+    const q = search.toString();
+    return api<Contract[]>(`/contracts${q ? `?${q}` : ""}`);
+  },
+
+  getContract(id: string) {
+    return api<Contract>(`/contracts/${id}`);
+  },
+
+  createContract(data: {
+    customerId: string;
+    templateId: string;
+    title?: string;
+    variables?: Record<string, string>;
+    serviceOrderId?: string;
+    expiresInDays?: number;
+  }) {
+    return api<Contract>("/contracts", { method: "POST", body: data });
+  },
+
+  sendContract(id: string) {
+    return api<Contract>(`/contracts/${id}/send`, { method: "POST" });
+  },
+
+  updateContract(
+    id: string,
+    data: {
+      title?: string;
+      content?: string;
+      variables?: Record<string, string>;
+      expiresInDays?: number;
+    },
+  ) {
+    return api<Contract>(`/contracts/${id}`, { method: "PATCH", body: data });
+  },
+
+  approveContract(id: string) {
+    return api<Contract>(`/contracts/${id}/approve`, { method: "PATCH" });
+  },
+
+  rejectContract(id: string, reviewNote: string) {
+    return api<Contract>(`/contracts/${id}/reject`, {
+      method: "PATCH",
+      body: { reviewNote },
+    });
+  },
+
+  cancelContract(id: string) {
+    return api<Contract>(`/contracts/${id}/cancel`, { method: "POST" });
+  },
+
+  getContractDocumentBlob(contractId: string, type: string) {
+    return apiBlob(`/contracts/${contractId}/documents/${type}`);
+  },
+
+  getContractSignatureBlob(contractId: string) {
+    return apiBlob(`/contracts/${contractId}/signature`);
   },
 };

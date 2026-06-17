@@ -7,9 +7,10 @@ type Props = {
   onClose: () => void;
   children: ReactNode;
   footer?: ReactNode;
+  wide?: boolean;
 };
 
-export function Modal({ open, title, onClose, children, footer }: Props) {
+export function Modal({ open, title, onClose, children, footer, wide }: Props) {
   useEffect(() => {
     if (!open) return;
     function onKey(e: KeyboardEvent) {
@@ -28,7 +29,7 @@ export function Modal({ open, title, onClose, children, footer }: Props) {
   return (
     <div className="modal-overlay" onClick={onClose} role="presentation">
       <div
-        className="modal-panel"
+        className={wide ? "modal-panel modal-panel-wide" : "modal-panel"}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"

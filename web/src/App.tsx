@@ -12,6 +12,10 @@ import { StockPage } from "./pages/StockPage";
 import { UsersPage } from "./pages/UsersPage";
 import { EvaluationsPage } from "./pages/EvaluationsPage";
 import { PushPage } from "./pages/PushPage";
+import { ContractTemplatesPage } from "./pages/ContractTemplatesPage";
+import { ContractsPage } from "./pages/ContractsPage";
+import { ContractDetailPage } from "./pages/ContractDetailPage";
+import { SignContractPage } from "./pages/SignContractPage";
 
 function Protected({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -25,6 +29,7 @@ export default function App() {
     <AuthProvider>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/assinatura/:token" element={<SignContractPage />} />
         <Route
           element={
             <Protected>
@@ -41,6 +46,9 @@ export default function App() {
           <Route path="stock" element={<StockPage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="evaluations" element={<EvaluationsPage />} />
+          <Route path="contract-templates" element={<ContractTemplatesPage />} />
+          <Route path="contracts" element={<ContractsPage />} />
+          <Route path="contracts/:id" element={<ContractDetailPage />} />
           <Route path="push" element={<PushPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

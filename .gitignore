@@ -45,5 +45,8 @@ web-build/
 # Prisma / cache
 **/.prisma/
 
+# Uploads locais (contratos)
+**/uploads/
+
 # TypeScript
 *.tsbuildinfo

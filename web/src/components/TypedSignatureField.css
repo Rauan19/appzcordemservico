@@ -1,0 +1,73 @@
+.typed-signature-field {
+  margin-bottom: 8px;
+}
+
+.sign-mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.sign-mode-tab {
+  min-height: 40px;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+  background: var(--bg);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.sign-mode-tab.active {
+  border-color: var(--primary);
+  background: var(--accent-light);
+  color: var(--primary);
+}
+
+.typed-sign-help {
+  margin: 0 0 8px;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.sign-input-large {
+  min-height: 42px !important;
+  font-size: 0.9375rem !important;
+  padding: 9px 12px !important;
+}
+
+.typed-sign-preview {
+  margin-top: 8px;
+  padding: 10px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: #fff;
+  text-align: center;
+}
+
+.typed-sign-preview-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.typed-sign-preview-text {
+  margin: 0;
+  font-family: "Segoe Script", "Brush Script MT", "Lucida Handwriting", cursive;
+  font-size: clamp(1.25rem, 5vw, 1.75rem);
+  color: var(--primary);
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+@media (max-width: 420px) {
+  .sign-mode-tabs {
+    grid-template-columns: 1fr;
+  }
+}

@@ -213,10 +213,37 @@ async function main() {
     });
   }
 
+  const templateContent = `CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE INTERNET
+
+Pelo presente instrumento, {{nome}}, inscrito(a) no CPF {{cpf}}, telefone {{telefone}}, residente em {{endereco}}, contrata os serviços da ZC NET CONFIG.
+
+Plano contratado: {{plano}}
+Valor mensal: R$ {{valor}}
+
+Data: {{data}}
+
+Ao assinar digitalmente, o contratante declara estar de acordo com os termos acima.`;
+
+  await prisma.contractTemplate.upsert({
+    where: { id: "seed-contract-template" },
+    create: {
+      id: "seed-contract-template",
+      name: "Contrato Internet Residencial",
+      content: templateContent,
+      createdById: admin.id,
+    },
+    update: {
+      name: "Contrato Internet Residencial",
+      content: templateContent,
+      active: true,
+    },
+  });
+
   console.log("Seed OK:");
   console.log("  admin@zcnet.local / admin123");
   console.log("  tecnico@zcnet.local / tecnico123");
   console.log("  OS-DEMO-001 (Atribuída), OS-DEMO-002 (Aberta), OS-DEMO-DONE (avaliação demo)");
+  console.log("  Modelo de contrato demo criado");
   void admin;
 }
 

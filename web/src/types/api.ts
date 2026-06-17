@@ -160,3 +160,94 @@ export type SendPushResult = {
   failed: number;
   invalidTokensRemoved: number;
 };
+
+export type ContractStatus =
+  | "DRAFT"
+  | "SENT"
+  | "OPENED"
+  | "DOCS_SUBMITTED"
+  | "SIGNED"
+  | "APPROVED"
+  | "REJECTED"
+  | "EXPIRED"
+  | "CANCELED";
+
+export type ContractDocumentType = "ID_FRONT" | "ID_BACK" | "SELFIE_WITH_ID";
+
+export type ContractTemplate = {
+  id: string;
+  name: string;
+  content: string;
+  version: number;
+  active: boolean;
+  createdAt?: string;
+  createdBy?: Pick<User, "id" | "name"> | null;
+  _count?: { contracts: number };
+};
+
+export type ContractDocument = {
+  id: string;
+  contractId: string;
+  type: ContractDocumentType;
+  mimeType: string;
+  sizeBytes: number;
+  createdAt: string;
+};
+
+export type ContractSignature = {
+  id: string;
+  contractId: string;
+  signerName: string;
+  signerCpf: string;
+  ipAddress?: string | null;
+  userAgent?: string | null;
+  latitude?: string | null;
+  longitude?: string | null;
+  signedAt: string;
+};
+
+export type Contract = {
+  id: string;
+  code: string;
+  customerId: string;
+  templateId: string;
+  title: string;
+  content: string;
+  status: ContractStatus;
+  variables?: Record<string, string> | null;
+  accessToken: string;
+  expiresAt?: string | null;
+  sentAt?: string | null;
+  openedAt?: string | null;
+  signedAt?: string | null;
+  approvedAt?: string | null;
+  reviewNote?: string | null;
+  signingUrl?: string;
+  customer?: Customer;
+  template?: Pick<ContractTemplate, "id" | "name" | "version">;
+  documents?: ContractDocument[];
+  signature?: ContractSignature | null;
+  serviceOrder?: { id: string; code: string; title: string } | null;
+  createdBy?: Pick<User, "id" | "name"> | null;
+  reviewedBy?: Pick<User, "id" | "name"> | null;
+  createdAt?: string;
+};
+
+export type PublicContract = {
+  id: string;
+  code: string;
+  title: string;
+  content: string;
+  status: ContractStatus;
+  variables?: Record<string, string> | null;
+  expiresAt?: string | null;
+  customerName: string;
+  documents: Array<{ type: ContractDocumentType; uploaded: boolean }>;
+  signed: boolean;
+  signature?: {
+    signerName: string;
+    signerCpf: string;
+    signedAt: string;
+    ipAddress?: string | null;
+  } | null;
+};
