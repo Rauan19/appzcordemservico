@@ -47,7 +47,7 @@ export function ContractDetailPage() {
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [editVariables, setEditVariables] = useState<VariableRow[]>([]);
-  const [includeDocumentAttachments, setIncludeDocumentAttachments] = useState(true);
+  const [includeDocumentAttachments, setIncludeDocumentAttachments] = useState(false);
 
   function load() {
     if (!id) return;
@@ -362,14 +362,14 @@ export function ContractDetailPage() {
       {contract.signature && (
         <div className="card printable-contract">
           <div className="card-actions no-print">
-            <label className="export-doc-option">
-              <input
-                type="checkbox"
-                checked={includeDocumentAttachments}
-                onChange={(e) => setIncludeDocumentAttachments(e.target.checked)}
-              />
-              <span>Incluir anexos dos documentos no PDF</span>
-            </label>
+              <label className="export-doc-option">
+                <input
+                  type="checkbox"
+                  checked={includeDocumentAttachments}
+                  onChange={(e) => setIncludeDocumentAttachments(e.target.checked)}
+                />
+                <span>Incluir fotos dos documentos no PDF (opcional)</span>
+              </label>
             <button type="button" className="btn btn-primary" onClick={handleExportPdf}>
               Baixar / salvar como PDF
             </button>

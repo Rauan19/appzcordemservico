@@ -213,27 +213,23 @@ async function main() {
     });
   }
 
-  const templateContent = `CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE INTERNET
-
-Pelo presente instrumento, {{nome}}, inscrito(a) no CPF {{cpf}}, telefone {{telefone}}, residente em {{endereco}}, contrata os serviços da ZC NET CONFIG.
-
-Plano contratado: {{plano}}
-Valor mensal: R$ {{valor}}
-
-Data: {{data}}
-
-Ao assinar digitalmente, o contratante declara estar de acordo com os termos acima.`;
+  const { readFileSync } = await import("node:fs");
+  const { resolve } = await import("node:path");
+  const templateContent = readFileSync(
+    resolve(process.cwd(), "prisma/contract-template-zcnet.txt"),
+    "utf8",
+  );
 
   await prisma.contractTemplate.upsert({
     where: { id: "seed-contract-template" },
     create: {
       id: "seed-contract-template",
-      name: "Contrato Internet Residencial",
+      name: "Termo de Adesão ZC NET (SCM/SVA)",
       content: templateContent,
       createdById: admin.id,
     },
     update: {
-      name: "Contrato Internet Residencial",
+      name: "Termo de Adesão ZC NET (SCM/SVA)",
       content: templateContent,
       active: true,
     },

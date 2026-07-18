@@ -64,7 +64,7 @@ export function SignContractPage() {
   const [previews, setPreviews] = useState<Partial<Record<ContractDocumentType, string>>>({});
   const [photoNames, setPhotoNames] = useState<Partial<Record<ContractDocumentType, string>>>({});
   const [photoErrors, setPhotoErrors] = useState<Partial<Record<ContractDocumentType, string>>>({});
-  const [includeDocumentAttachments, setIncludeDocumentAttachments] = useState(true);
+  const [includeDocumentAttachments, setIncludeDocumentAttachments] = useState(false);
   const signatureUrl = token && contract?.signed ? publicSignatureUrl(token) : undefined;
 
   function load() {
@@ -351,7 +351,7 @@ export function SignContractPage() {
                   checked={includeDocumentAttachments}
                   onChange={(e) => setIncludeDocumentAttachments(e.target.checked)}
                 />
-                <span>Incluir anexos dos documentos no PDF</span>
+                <span>Incluir fotos dos documentos no PDF (opcional)</span>
               </label>
               <button type="button" className="btn btn-primary sign-btn-large" onClick={handleExportPdf}>
                 Baixar / salvar PDF

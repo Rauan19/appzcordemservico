@@ -10,17 +10,28 @@ import { CONTRACT_VARIABLES, variableToken } from "../utils/contract-variables";
 import "./ContractsPage.css";
 
 const CONTRACT_FIELD_DEFAULTS: Record<string, string> = {
-  plano: "100 Mega",
+  plano: "100MB",
   valor: "99,90",
-  velocidade: "100 Mbps",
-  fidelidade: "12 meses",
   instalacao: "0,00",
   vencimento: "10",
-  equipamento: "ONU em comodato",
-  empresa: "ZC NET CONFIG",
-  cnpj: "",
+  prazo_contratual: "indeterminado",
+  equipamento: "Comodato da Contratada",
+  serial_onu: "",
+  forma_pagamento: "Boleto Bancário",
+  autoriza_publicidade: "Não",
+  autoriza_cobranca_eletronica: "Sim",
+  autoriza_dados_terceiros: "Não",
+  empresa: "ZC NET",
+  cnpj: "27.057.361/0001-20",
+  empresa_endereco: "Fazenda Pilar, s/n, Zona Rural, São Felix/BA",
+  telefone_empresa: "(75) 99195-1940",
   representante_nome: "",
   representante_cpf: "",
+  rg: "",
+  data_nascimento: "",
+  naturalidade: "",
+  pai: "",
+  mae: "",
 };
 
 const CONTRACT_VARIABLES_STORAGE_KEY = "zcnet_contract_variables";
@@ -41,9 +52,9 @@ function loadContractVariableDefaults() {
 
 const CONTRACT_FORM_VARIABLES = CONTRACT_VARIABLES.filter(
   (v) =>
-    (v.group === "contrato" || v.group === "provedor") &&
-    v.key !== "representante_nome" &&
-    v.key !== "representante_cpf",
+    !["nome", "cpf", "telefone", "whatsapp", "email", "endereco", "rua", "numero", "bairro", "cidade", "estado", "cep", "data", "representante_nome", "representante_cpf"].includes(
+      v.key,
+    ),
 );
 
 const DEFAULT_VARIABLE_KEYS = new Set(CONTRACT_FORM_VARIABLES.map((v) => v.key));
@@ -356,7 +367,11 @@ export function ContractsPage() {
                   </div>
                 )}
               </div>
-              <p className="form-section-title">Dados do contrato</p>
+              <p className="form-section-title">Dados do termo de adesão</p>
+              <p className="search-meta">
+                Nome, CPF, telefone, e-mail e endereço vêm do cadastro do cliente. Preencha o restante conforme o
+                contrato oficial da ZC NET.
+              </p>
               <div className="grid-2">
                 {CONTRACT_FORM_VARIABLES.map((variable) => (
                   <div key={variable.key} className="field">

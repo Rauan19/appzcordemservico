@@ -3,27 +3,10 @@ import { Modal } from "../components/Modal";
 import { bindTemplateTextareaDrop, TemplateVariableChips } from "../components/TemplateVariableChips";
 import { adminApi } from "../services/admin-api";
 import type { ContractTemplate } from "../types/api";
+import DEFAULT_CONTENT from "../utils/zcnet-contract-template.txt?raw";
 import "./ContractTemplatesPage.css";
 
-const DEFAULT_CONTENT = `CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE INTERNET
-
-CONTRATADA: {{empresa}}, inscrita no CNPJ {{cnpj}}.
-
-CONTRATANTE: {{nome}}, inscrito(a) no CPF {{cpf}}, telefone {{telefone}}, residente em {{endereco}}.
-
-Plano contratado: {{plano}}
-Velocidade: {{velocidade}}
-Valor mensal: R$ {{valor}}
-Vencimento: dia {{vencimento}}
-Fidelidade: {{fidelidade}}
-Taxa de instalação: R$ {{instalacao}}
-Equipamento: {{equipamento}}
-
-Data: {{data}}
-
-Ao assinar digitalmente, o(a) CONTRATANTE declara estar de acordo com os termos acima.`;
-
-const emptyForm = { name: "", content: DEFAULT_CONTENT, active: true };
+const emptyForm = { name: "Termo de Adesão ZC NET (SCM/SVA)", content: DEFAULT_CONTENT, active: true };
 
 export function ContractTemplatesPage() {
   const [templates, setTemplates] = useState<ContractTemplate[]>([]);

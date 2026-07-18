@@ -1,0 +1,166 @@
+TERMO DE ADESÃO AO CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE COMUNICAÇÃO MULTIMÍDIA E PROVIMENTO DE ACESSO À INTERNET
+
+Por este instrumento particular, o ASSINANTE abaixo qualificado contrata e adere ao Serviço da {{empresa}}, pessoa jurídica de direito privado, inscrita no CNPJ sob o nº {{cnpj}}, com sede na {{empresa_endereco}}, devidamente credenciada pela Agência Nacional de Telecomunicações – ANATEL, doravante denominada PRESTADORA.
+
+IDENTIFICAÇÃO DO ASSINANTE
+Nome: {{nome}}
+Data de Nascimento: {{data_nascimento}}                    Naturalidade: {{naturalidade}}
+CPF/CNPJ: {{cpf}}                                           RG/ID: {{rg}}
+Pai: {{pai}}
+Mãe: {{mae}}
+Endereço: {{rua}}                                           nº {{numero}}
+Bairro: {{bairro}}
+Cidade: {{cidade}}                                          Estado: {{estado}}                    CEP: {{cep}}
+Celular WhatsApp: {{whatsapp}}                              Ligação Celular: {{telefone}}
+E-mail: {{email}}
+
+O presente termo é regulamentado pelo Código Brasileiro do Consumidor e pelos Regulamentos referentes aos Serviços de Comunicação Multimídia (SCM) e Serviço de Valor Adicionado (SVA), no qual as opções abaixo determinadas são de responsabilidade do ASSINANTE.
+
+Dados Técnicos e Comerciais do Plano de Acesso e Modalidade escolhida:
+Plano: {{plano}}
+Prazo Contratual: {{prazo_contratual}}
+Equipamentos ONU/ONT: {{equipamento}}
+Data de Vencimento: dia {{vencimento}}
+Valor mensal: R$ {{valor}}
+Taxa de instalação/adesão: R$ {{instalacao}}
+Autoriza o recebimento de mensagem publicitária em seu telefone móvel: {{autoriza_publicidade}}
+Autoriza que o documento de cobrança, correspondências e notificações sejam encaminhados por quaisquer meios eletrônicos indicados neste termo (e-mail, SMS, WhatsApp, Telegram, dentre outros): {{autoriza_cobranca_eletronica}}
+Forma de Pagamento: {{forma_pagamento}}
+Autorizo o fornecimento para terceiros dos meus dados cadastrais e/ou pessoais, inclusive as informações de consumo e registro de comportamento de Utilização/navegação, nos termos da lei em vigor: {{autoriza_dados_terceiros}}
+
+O presente Termo de Adesão vigorará enquanto estiver vigente o Contrato de Prestação de Serviço de Comunicação Multimídia e Provimento de Acesso à Internet (SCM/SVA).
+
+1: O ASSINANTE está ciente que a PRESTADORA fiscalizará a regular utilização dos serviços ora contratados, e a violação das normas, caso detectada pela PRESTADORA, implicará aplicação das sanções atinentes à espécie, conforme estipulado no Contrato de Prestação de Serviço de Comunicação Multimídia e Provimento de Acesso à Internet (SCM/SVA) aderido.
+
+2: O ASSINANTE declara estar ciente, mesmo que a PRESTADORA forneça todas as condições necessárias para a prestação de serviços (fornecimento de internet), os dispositivos do ASSINANTE podem conter tecnologia inferior a velocidade ofertada pela PRESTADORA, a banda contratada não será integralmente usufruída pelo dispositivo utilizado pelo cliente para navegar.
+
+3: O ASSINANTE declara estar ciente que nos planos de acesso que seja definida a velocidade de conexão, o seu valor será expresso em Kbps (kilobits por segundo), que caracterizará o máximo possível a ser obtido, alusiva, tão-somente, ao cômodo no qual serão instalados os equipamentos de acesso e, para aferição da velocidade, o equipamento deverá sempre ser ligado direto na ONU (roteador), via cabo, através de uma de suas portas LAN (REDE) e os demais dispositivos conectados nas portas LAN (REDE) ou no Wifi devem ser desconectados para a correta medição da velocidade.
+
+4: A PRESTADORA não garante prestação de suporte quando os equipamentos do ASSINANTE não forem compatíveis ou conhecidos pela PRESTADORA, assim como equipamentos e aplicativos de terceiros, ou não possuam os requisitos mínimos necessários para garantir o padrão de qualidade e o desempenho adequado do serviço prestado, tais como, velocidade e disponibilidade.
+
+CONDIÇÕES DE DEGRADAÇÃO OU INTERRUPÇÃO DOS SERVIÇOS PRESTADOS: O ASSINANTE tem ciência dos motivos que podem culminar na degradação dos serviços de comunicação multimídia (SCM) prestados, são eles:
+(a) Ações da natureza, tais como chuvas, descargas atmosféricas e outras que configurem força maior; (b) Interferências prejudiciais provocadas por equipamentos de terceiros; (c) Bloqueio da visada limpa; (d) Casos fortuitos; (e) Interrupção de energia elétrica; (f) Falhas nos equipamentos e instalações; (g) Rompimento parcial ou total dos meios de rede; (h) Interrupções por ordem da Anatel, ordem judicial ou outra investida com poderes para tal; (i) Bloqueios decorrentes de decisões judiciais; (j) Interferências causadas por aplicativos ou softwares de terceiros; (k) Outras previstas contratualmente.
+
+DECLARAÇÃO DE CONCORDÂNCIA:
+
+Declaro, para os devidos fins, que são corretos os dados cadastrais e informações por mim prestadas neste instrumento. Declaro ainda que os documentos apresentados para formalização deste contrato e as cópias dos documentos entregues à CONTRATADA pertencem a minha pessoa, tendo ciência das sanções civis e criminais caso prestar declarações falsas, entregar documentos falsos e me passar por outrem.
+
+Declaro estar ciente que a assinatura deste instrumento representa expressa concordância aos termos e condições do CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE COMUNICAÇÃO MULTIMÍDIA E PROVIMENTO DE ACESSO À INTERNET, que juntamente com esse TERMO DE ADESÃO formam um só instrumento de direito, tendo lido e entendido claramente as condições ajustadas para esta contratação.
+
+A adesão ao presente contrato implica na ciência e concordância do ASSINANTE quanto ao uso de seus dados pessoais (nome, CPF, RG, telefone e e-mail) pela PRESTADORA, condição essencial para a prestação dos serviços, nos termos do §3º do art. 9º da Lei 13.709/18. O mesmo se aplica ao endereço IP do ASSINANTE, em razão do cumprimento de obrigação legal e regulatória.
+
+Ao assinar este termo ou aceitá-lo eletronicamente, o ASSINANTE manifesta concordância com suas cláusulas e com o Contrato de Prestação de Serviço de Comunicação Multimídia e Provimento de Acesso à Internet (SCM/SVA), parte integrante deste documento, para que produza todos os seus efeitos legais.
+
+Estou ciente sobre a funcionalidade dos serviços prestados (2ª via de boleto, 2ª liberação, atualizar dados de contato, teste de velocidade) assim como cópia integral do Contrato de Prestação de Serviços de Comunicação Multimídia podem ser obtidas junto a PRESTADORA.
+
+São Felix, {{data}}
+
+ASSINANTE: {{nome}}
+
+
+CONTRATO DE COMODATO
+
+OBJETO: A COMODANTE cede a título de empréstimo ao COMODATÁRIO, o seguinte equipamento:
+
+ONU/ONT: Serial {{serial_onu}}
+
+OBRIGAÇÕES DO COMODATÁRIO
+
+Cuidar dos bens cedidos em comodato, mantendo-os em perfeito estado de uso, gozo e conservação e restituindo-os ao COMODANTE, na sua quantidade ou valor monetário equivalente, em caso de perda, furto, roubo, má utilização, inutilização parcial ou total, e/ou outra situação em que fique caracterizada a negligência e desrespeito às premissas deste contrato pelo COMODATÁRIO.
+
+O usuário não deve transferir ou ceder a terceiros, sob qualquer título, o acesso à conexão e comunicação sem fio da rede Internet Wireless da prestadora. Também não é permitido alterar as configurações dos equipamentos, mudar sua localização ou modificar seu layout em nenhuma hipótese. Os pagamentos dos boletos bancários emitidos para restituição de valores devem ser feitos pontualmente.
+
+PRAZO DO CONTRATO DE COMODATO
+
+O prazo de vigência deste contrato de comodato é indeterminado, porém vinculado ao contrato de prestação de serviços de internet banda larga firmado entre as partes.
+
+Se houver rescisão, cancelamento, suspensão ou extinção do contrato de prestação de serviços, o comodato será automaticamente encerrado, e o usuário deverá devolver os equipamentos ou restituir o valor correspondente.
+
+O contrato de comodato tem validade de 12 meses, sendo renovado automaticamente após este período.
+
+As faturas serão enviadas com no mínimo 5 dias antes da data de vencimento.
+
+São Felix, {{data}}
+
+ASSINANTE: {{nome}}
+
+
+CONTRATO DE PRESTAÇÃO DE SERVIÇO DE COMUNICAÇÃO MULTIMÍDIA E PROVIMENTO DE ACESSO À INTERNET (SCM/SVA)
+
+As partes acima identificadas têm, entre si, justo e acertado o presente Contrato de Prestação de Serviço de Comunicação Multimídia e Provimento de Acesso à Internet (SCM/SVA), que se regerá pelas cláusulas seguintes e pelas condições descritas no presente.
+
+DO OBJETO DO CONTRATO
+CLÁUSULA 1ª - O objeto do presente contrato é a prestação de serviços de acesso à INTERNET, conforme PLANO DE ACESSO escolhido pelo CONTRATANTE.
+PARÁGRAFO PRIMEIRO - A CONTRATADA não será, em hipótese alguma, responsável pela interrupção ou suspensão da conexão à rede internet, e pelos danos decorrentes, nos casos de:
+Interrupção no fornecimento de energia elétrica para o sistema da CONTRATADA;
+Desligamento ou interrupção temporária do sistema, decorrente de reparos ou manutenção das redes elétrica e telefônica externas;
+Incompatibilidade dos sistemas do CONTRATANTE com os da CONTRATADA, ocasionada por alterações das configurações do computador do CONTRATANTE, posteriores à contratação do serviço;
+Motivos de força maior, caso fortuito ou ação de terceiros, que ocorram independente da vontade da CONTRATADA, como por exemplo, interrupção ou cancelamento dos seguintes serviços básicos: acesso a Rede Internet através das linhas internacionais da Rede Nacional de Pesquisas, ANATEL e/ou outros, conexões LCPD e de linhas telefônicas da operadora local.
+
+DA IDENTIFICAÇÃO DO CLIENTE
+CLÁUSULA 2ª - O CONTRATANTE receberá um LOGIN DE IDENTIFICAÇÃO ELETRÔNICA DE CLIENTE (CÓDIGO) e uma SENHA SECRETA (SENHA PESSOAL).
+PARÁGRAFO PRIMEIRO - O LOGIN e a SENHA PESSOAL serão definidos segundo os critérios estabelecidos pela CONTRATADA, sendo que para cada contrato firmado pelo CONTRATANTE haverá uma combinação diferente de LOGIN e SENHA PESSOAL;
+PARÁGRAFO SEGUNDO - O LOGIN é um nome composto por 8 (oito) caracteres, escolhido pelo CONTRATANTE.
+PARÁGRAFO TERCEIRO - A SENHA PESSOAL será fornecida pela CONTRATADA, sendo que o CONTRATANTE poderá modificá-la sempre que lhe convier, desde que respeite as limitações técnicas do sistema.
+PARÁGRAFO QUARTO - O LOGIN e a SENHA PESSOAL são a identificação do CONTRATANTE para acessar a Rede Internet e é através deles que o CONTRATANTE será reconhecido internacionalmente e pela CONTRATADA. São, por isso, individuais, ficando vedada qualquer forma de transferência ou comercialização a terceiros, em qualquer circunstância.
+PARÁGRAFO QUINTO - O uso indevido da senha pelo CONTRATANTE, ou por terceiros, é de exclusiva responsabilidade do CONTRATANTE.
+CLÁUSULA 3ª - O CONTRATANTE fica expressamente proibido de realizar conexões simultâneas com o mesmo LOGIN, sob pena de cancelamento imediato da prestação de serviço por parte da CONTRATADA, continuando o CONTRATANTE responsável pelo pagamento de todos os débitos que porventura estejam pendentes junto a CONTRATADA.
+CLÁUSULA 4ª - Havendo violação ou quebra da senha do CONTRATANTE, este deverá comunicar imediatamente à CONTRATADA, logo após o conhecimento do fato, para que sejam tomadas as devidas providências quanto ao bloqueio da senha. Neste caso, a CONTRATADA não se responsabiliza, em nenhuma hipótese, por quaisquer danos sofridos pelo CONTRATANTE, ou por outrem.
+
+DAS RESPONSABILIDADES CÍVEIS E CRIMINAIS DO CONTRATANTE
+CLÁUSULA 5ª - O CONTRATANTE responderá civil e criminalmente pelo conteúdo disposto em sua área de Home Page, pelo backup da mesma, bem como, pelas mensagens transmitidas por ele ou para ele, sob sua autorização, especialmente aquelas que venham a ofender dispositivo ou princípio legal, ético e moral, ou qualquer usuário da rede, mesmo que de outro provedor, localidade ou país, ficando, desde já, como único responsável por quaisquer informações que distribua na rede e quaisquer outros prejuízos que venha causar à CONTRATADA ou a terceiros;
+PARÁGRAFO ÚNICO - O CONTRATANTE será o único responsável:
+pela utilização, por si ou por terceiro, de seu LOGIN e SENHA PESSOAL;
+por prevenir-se contra a perda de dados, invasão de rede, eventuais danos causados pela má utilização do serviço, tais como vírus de computador, roubo de senha e dados de qualquer natureza;
+pela aquisição, instalação e manutenção de seus equipamentos e programas, sendo livre a escolha de fornecedor e opções de configuração, desde que não altere as configurações iniciais que garantem a compatibilidade com o sistema de prestação do serviço;
+por arcar com todas as sanções e penalidades decorrentes de seus atos;
+por honrar todos os compromissos financeiros, contratuais e legais que assumir, desobrigando a CONTRATADA de qualquer responsabilidade por danos causados a terceiros, independente de sua natureza, seja por dolo ou culpa, decorrentes da utilização do serviço, ora contratado, ou pelo CONTRATANTE ou por terceiro que empregue com ou sem autorização seu LOGIN e SENHA PESSOAL;
+respeitar as leis e normas em geral, especialmente aquelas que versem sobre direito autoral e propriedade intelectual.
+
+DA SUSPENSÃO E INTERRUPÇÃO DOS SERVIÇOS E PRAZOS PARA REESTABELECIMENTO:
+CLÁUSULA 6ª - A CONTRATADA tem o prazo de até 24 (vinte e quatro) horas contados da comunicação do CONTRATANTE sobre a interrupção do serviço de internet, através do nosso telefone {{telefone_empresa}}, para resolução do problema técnico de interrupção de serviços, se for de fácil resolução. As solicitações de serviços que não puderem ser efetivadas de imediato devem ser efetivadas em, no máximo, 10 (dez) dias úteis a partir de seu recebimento.
+
+DA FISCALIZAÇÃO
+CLÁUSULA 7ª - A CONTRATADA fiscalizará a conduta do CONTRATANTE no uso da rede, podendo notificá-lo caso detecte irregularidade.
+PARÁGRAFO PRIMEIRO - Caso o CONTRATANTE não tome as providências e medidas solicitadas pela CONTRATADA, esta poderá, a qualquer momento e a seu critério, independentemente de ação ou ordem judicial, suspender temporariamente ou definitivamente a prestação de serviço ao CONTRATANTE;
+PARÁGRAFO SEGUNDO - A adoção das medidas previstas no parágrafo primeiro, não enseja ao CONTRATANTE o direito a ressarcimento, indenização ou multa a qualquer título.
+
+DO PAGAMENTO PELO SERVIÇO
+CLÁUSULA 8ª - O CONTRATANTE terá direito a utilizar o serviço contratado, mediante o pagamento das taxas de adesão, além do pagamento da assinatura mensal e dos valores extras, todos especificados neste instrumento, conforme o Plano de Acesso aderido.
+PARÁGRAFO PRIMEIRO - A não utilização do(s) serviço(s) objeto deste contrato não desonera o CONTRATANTE do pagamento da sua assinatura mensal, enquanto este contrato permanecer vigente.
+CLÁUSULA 9ª - A taxa de adesão e/ou instalação será paga em parcela única, no ato da visita técnica da CONTRATADA ao CONTRATANTE, somente em espécie, contra recibo, ou ainda, por autorização para débito em cartão de crédito do CONTRATANTE ou de terceiro, neste caso, devidamente autorizado pelo titular do cartão.
+CLÁUSULA 10ª - O pagamento das mensalidades deverá ser efetuado mediante cobrança bancária, débito em conta corrente do CONTRATANTE, via PIX, depósito em conta corrente da CONTRATADA ou através de débito em cartão de crédito do CONTRATANTE, ou de terceiro, desde que devidamente autorizado por este, conforme acordado entre as partes.
+CLÁUSULA 11ª - As mensalidades deverão ser pagas na data escolhida pelo CONTRATANTE sem atrasos. O atraso no pagamento das mensalidades dará direito à CONTRATADA de proceder à desativação do acesso do CONTRATANTE, de acordo com o previsto na cláusula 16ª deste contrato.
+CLÁUSULA 12ª - O inadimplemento do CONTRATANTE implicará na obrigação de pagar os encargos financeiros de acordo com as taxas praticadas pelo mercado, observada a legislação aplicável, sem prejuízo de multa moratória de 2% (dois por cento) sobre o valor efetivamente devido com os acréscimos contratuais e legais, acrescido de juros cumulativos de 1% (um por cento) ao mês ou fração do mês.
+CLÁUSULA 13ª - O valor referente ao primeiro mês será cobrado proporcionalmente, de acordo com a Data da adesão do CONTRATANTE à CONTRATADA.
+CLÁUSULA 14ª - No sentido de manter o equilíbrio econômico deste contrato, os valores inicialmente pactuados poderão ser reajustados a qualquer tempo, mediante acordo entre as partes.
+
+DO PRAZO, SUSPENSÃO E RESCISÃO CONTRATUAL
+CLÁUSULA 15ª - Este contrato tem prazo indeterminado, entrando em vigor na Data de sua celebração, podendo ser rescindido ou suspenso a qualquer tempo, sem ensejar qualquer indenização ou recusa pelas partes, desde que ocorra mediante notificação expressa e prévia de 30 dias, por e-mail ou correspondência postal. Durante este período de 30 dias as partes continuam obrigadas ao cumprimento deste instrumento.
+CLÁUSULA 16ª - A CONTRATADA suspenderá o contrato se, a seu exclusivo critério, considerar inapropriada a utilização do serviço pelo CONTRATANTE, que, neste caso, será, logo em seguida, devidamente notificado, por telefone, correio eletrônico ou correspondência postal, para sanar o problema imediatamente.
+CLÁUSULA 17ª - Havendo persistência no uso inapropriado do serviço, a CONTRATADA rescindirá este contrato, independente de notificação prévia, cabendo ao CONTRATANTE ressarci-la pelos prejuízos que lhe forem causados.
+CLÁUSULA 18ª - O inadimplemento das mensalidades do CONTRATANTE por prazo maior ou igual a 30 dias facultará à CONTRATADA suspender a prestação do serviço, a seu exclusivo critério. Estendendo-se esta situação por mais de 10 (dez) dias, poderá ser este contrato rescindido, a critério da CONTRATADA, independente de aviso prévio. O valor devido pelo CONTRATANTE será cobrado de forma amigável ou judicial.
+PARÁGRAFO ÚNICO - O descumprimento de qualquer das disposições estabelecidas no presente contrato, bem como a falência ou concordata de qualquer das partes, autoriza a rescisão de pronto deste instrumento, sem necessidade de notificação prévia.
+
+DA MUDANÇA DE PLANO
+CLÁUSULA 19ª - O CONTRATANTE só poderá solicitar a mudança do plano de INTERNET contratado após 30 dias da sua contratação, tendo a CONTRATADA o prazo de 5 (cinco) dias úteis, após a solicitação, para proceder a mudança.
+
+DA MUDANÇA DE TITULARIDADE
+CLÁUSULA 20ª - Caso o CONTRATANTE queira modificar a titularidade deste contrato, deverá assinar TERMO DE MUDANÇA DE TITULARIDADE DE CONTRATO DE PRESTAÇÃO DE SERVIÇO juntamente com o novo TITULAR, junto a CONTRATADA, tendo a CONTRATADA o prazo de 5 (cinco) dias úteis, após a solicitação, para proceder a mudança.
+
+DAS DISPOSIÇÕES GERAIS
+CLÁUSULA 21ª - A CONTRATADA se reserva o direito de suspender, alterar, ou extinguir qualquer tipo de serviço que, em função de sua utilização, venha a causar dano ao sistema ou venha a ser reprovado por circunstâncias operacionais, podendo ainda, suspender qualquer facilidade que seja ou que possa ser disponibilizada ao CONTRATANTE, sempre mediante aviso prévio de 7 (sete) dias.
+CLÁUSULA 22ª - A CONTRATADA poderá, eventualmente, deixar de exigir alguma obrigação que este instrumento lhe outorga, entretanto, tal liberalidade ou tolerância não importa, em hipótese alguma, renúncia dos seus direitos, alteração ou inovação do contrato;
+CLÁUSULA 23ª - A utilização do LOGIN e SENHA PESSOAL pelo cliente implica em sua expressa concordância com as cláusulas e condições contidas neste documento e dá plena vigência às condições pactuadas.
+
+DO FORO
+CLÁUSULA 24ª - As partes elegem o foro da comarca de São Felix/BA, para dirimir quaisquer dúvidas oriundas deste Contrato de Prestação de Serviços e do Termo de Adesão e de eventuais comunicações e/ou aditamentos, renunciando expressamente a outro por mais privilegiado que seja.
+
+E, por estarem assim justos e contratados, firmam o presente instrumento, em duas vias de igual teor, juntamente com 2 (duas) testemunhas.
+
+São Felix, {{data}}
+
+CONTRATANTE: {{nome}}
+
+CONTRATADO: {{empresa}}
+CNPJ: {{cnpj}}
