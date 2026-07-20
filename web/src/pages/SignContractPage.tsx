@@ -17,27 +17,33 @@ import "./SignContractPage.css";
 
 const STEPS = ["Contrato", "Documentos", "Assinatura", "Concluído"] as const;
 
-const DOC_FIELDS: Array<{ type: ContractDocumentType; label: string; hint: string }> = [
-  {
-    type: "ID_FRONT",
-    label: DOCUMENT_TYPE_LABELS.ID_FRONT,
-    hint: "Fotografe a parte da frente do RG ou CNH, com todos os dados legíveis.",
-  },
-  {
-    type: "ID_BACK",
-    label: DOCUMENT_TYPE_LABELS.ID_BACK,
-    hint: "Fotografe o verso do documento, sem cortar as bordas.",
-  },
-  {
-    type: "SELFIE_WITH_ID",
-    label: DOCUMENT_TYPE_LABELS.SELFIE_WITH_ID,
-    hint: "Tire uma selfie segurando o documento aberto ao lado do rosto.",
-  },
-];
+type IdDocumentKind = "RG" | "CNH";
+
+function buildDocFields(kind: IdDocumentKind) {
+  const article = kind === "CNH" ? "da" : "do";
+  const holding = kind === "CNH" ? "a CNH" : "o RG";
+  return [
+    {
+      type: "ID_FRONT" as const,
+      label: `Frente ${article} ${kind}`,
+      hint: `Fotografe a parte da frente ${article} ${kind}, com todos os dados legíveis.`,
+    },
+    {
+      type: "ID_BACK" as const,
+      label: `Verso ${article} ${kind}`,
+      hint: `Fotografe o verso ${article} ${kind}, sem cortar as bordas.`,
+    },
+    {
+      type: "SELFIE_WITH_ID" as const,
+      label: DOCUMENT_TYPE_LABELS.SELFIE_WITH_ID,
+      hint: `Tire uma selfie segurando ${holding} aberto(a) ao lado do rosto.`,
+    },
+  ];
+}
 
 function allDocumentsUploaded(documents: PublicContract["documents"]) {
-  return DOC_FIELDS.every((field) =>
-    documents.some((d) => d.type === field.type && d.uploaded),
+  return (["ID_FRONT", "ID_BACK", "SELFIE_WITH_ID"] as const).every((type) =>
+    documents.some((d) => d.type === type && d.uploaded),
   );
 }
 
@@ -65,6 +71,8 @@ export function SignContractPage() {
   const [photoNames, setPhotoNames] = useState<Partial<Record<ContractDocumentType, string>>>({});
   const [photoErrors, setPhotoErrors] = useState<Partial<Record<ContractDocumentType, string>>>({});
   const [includeDocumentAttachments, setIncludeDocumentAttachments] = useState(false);
+  const [docKind, setDocKind] = useState<IdDocumentKind | null>(null);
+  const docFields = docKind ? buildDocFields(docKind) : [];
   const signatureUrl = token && contract?.signed ? publicSignatureUrl(token) : undefined;
 
   function load() {
@@ -76,10 +84,10 @@ export function SignContractPage() {
         if (!signerName) setSignerName(data.customerName);
         setPreviews((current) => {
           const next = { ...current };
-          for (const field of DOC_FIELDS) {
-            const uploaded = data.documents.some((d) => d.type === field.type && d.uploaded);
-            if (uploaded && !next[field.type]) {
-              next[field.type] = publicDocumentUrl(token, field.type);
+          for (const type of ["ID_FRONT", "ID_BACK", "SELFIE_WITH_ID"] as const) {
+            const uploaded = data.documents.some((d) => d.type === type && d.uploaded);
+            if (uploaded && !next[type]) {
+              next[type] = publicDocumentUrl(token, type);
             }
           }
           return next;
@@ -97,7 +105,7 @@ export function SignContractPage() {
   }
 
   function missingDocuments() {
-    return DOC_FIELDS.filter((field) => !isUploaded(field.type));
+    return docFields.filter((field) => !isUploaded(field.type));
   }
 
   async function handleFile(type: ContractDocumentType, file: File) {
@@ -113,7 +121,7 @@ export function SignContractPage() {
       const updated = await publicApi<PublicContract>(`/public/contracts/${token}`);
       setContract(updated);
     } catch (e) {
-      const label = DOC_FIELDS.find((field) => field.type === type)?.label ?? "foto";
+      const label = docFields.find((field) => field.type === type)?.label ?? "foto";
       const detail = e instanceof Error ? e.message : "Erro no upload";
       setPhotoErrors((p) => ({
         ...p,
@@ -250,26 +258,50 @@ export function SignContractPage() {
           <>
             <h1>Fotos do documento</h1>
             <p className="sign-hint">
-              Envie as 3 fotos abaixo. Toque em <strong>Tirar foto</strong> para abrir a câmera ou use{" "}
-              <strong>Galeria</strong> se já tiver a imagem salva.
+              Escolha qual documento você vai enviar: <strong>RG</strong> ou <strong>CNH</strong>. Depois envie as 3
+              fotos. Toque em <strong>Tirar foto</strong> para abrir a câmera ou use <strong>Galeria</strong> se já
+              tiver a imagem salva.
             </p>
-            <div className="sign-docs">
-              {DOC_FIELDS.map(({ type, label, hint }, index) => (
-                <DocumentPhotoField
-                  key={type}
-                  step={index + 1}
-                  label={label}
-                  hint={hint}
-                  preview={previews[type]}
-                  fileName={photoNames[type]}
-                  error={photoErrors[type]}
-                  uploaded={!!isUploaded(type)}
-                  uploading={uploading === type}
-                  onSelect={(file) => handleFile(type, file)}
-                />
-              ))}
+            <div className="sign-doc-kind" role="group" aria-label="Tipo de documento">
+              <button
+                type="button"
+                className={`sign-doc-kind-btn ${docKind === "RG" ? "active" : ""}`}
+                onClick={() => setDocKind("RG")}
+              >
+                RG
+              </button>
+              <button
+                type="button"
+                className={`sign-doc-kind-btn ${docKind === "CNH" ? "active" : ""}`}
+                onClick={() => setDocKind("CNH")}
+              >
+                CNH
+              </button>
             </div>
-            {!canGoToSign() && (
+            {!docKind && (
+              <div className="sign-missing-docs">
+                <strong>Selecione o tipo de documento para continuar.</strong>
+              </div>
+            )}
+            {docKind && (
+              <div className="sign-docs">
+                {docFields.map(({ type, label, hint }, index) => (
+                  <DocumentPhotoField
+                    key={type}
+                    step={index + 1}
+                    label={label}
+                    hint={hint}
+                    preview={previews[type]}
+                    fileName={photoNames[type]}
+                    error={photoErrors[type]}
+                    uploaded={!!isUploaded(type)}
+                    uploading={uploading === type}
+                    onSelect={(file) => handleFile(type, file)}
+                  />
+                ))}
+              </div>
+            )}
+            {docKind && !canGoToSign() && (
               <div className="sign-missing-docs">
                 <strong>Para continuar, envie:</strong>
                 <ul>
@@ -286,7 +318,7 @@ export function SignContractPage() {
               <button
                 type="button"
                 className="btn btn-primary sign-btn-large"
-                disabled={!canGoToSign()}
+                disabled={!docKind || !canGoToSign()}
                 onClick={() => setStep(2)}
               >
                 Continuar para assinatura

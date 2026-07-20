@@ -101,6 +101,31 @@
   gap: 8px;
 }
 
+.sign-doc-kind {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+.sign-doc-kind-btn {
+  min-height: 44px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sign-doc-kind-btn.active {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, #fff);
+  color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
 .sign-missing-docs {
   margin-top: 8px;
   padding: 8px 10px;

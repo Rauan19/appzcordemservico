@@ -5,7 +5,7 @@ Por este instrumento particular, o ASSINANTE abaixo qualificado contrata e adere
 IDENTIFICAÇÃO DO ASSINANTE
 Nome: {{nome}}
 Data de Nascimento: {{data_nascimento}}                    Naturalidade: {{naturalidade}}
-CPF/CNPJ: {{cpf}}                                           RG/ID: {{rg}}
+CPF/CNPJ: {{cpf}}                                           RG/CNH: {{rg}}
 Pai: {{pai}}
 Mãe: {{mae}}
 Endereço: {{rua}}                                           nº {{numero}}
@@ -47,7 +47,7 @@ Declaro, para os devidos fins, que são corretos os dados cadastrais e informaç
 
 Declaro estar ciente que a assinatura deste instrumento representa expressa concordância aos termos e condições do CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE COMUNICAÇÃO MULTIMÍDIA E PROVIMENTO DE ACESSO À INTERNET, que juntamente com esse TERMO DE ADESÃO formam um só instrumento de direito, tendo lido e entendido claramente as condições ajustadas para esta contratação.
 
-A adesão ao presente contrato implica na ciência e concordância do ASSINANTE quanto ao uso de seus dados pessoais (nome, CPF, RG, telefone e e-mail) pela PRESTADORA, condição essencial para a prestação dos serviços, nos termos do §3º do art. 9º da Lei 13.709/18. O mesmo se aplica ao endereço IP do ASSINANTE, em razão do cumprimento de obrigação legal e regulatória.
+A adesão ao presente contrato implica na ciência e concordância do ASSINANTE quanto ao uso de seus dados pessoais (nome, CPF, RG/CNH, telefone e e-mail) pela PRESTADORA, condição essencial para a prestação dos serviços, nos termos do §3º do art. 9º da Lei 13.709/18. O mesmo se aplica ao endereço IP do ASSINANTE, em razão do cumprimento de obrigação legal e regulatória.
 
 Ao assinar este termo ou aceitá-lo eletronicamente, o ASSINANTE manifesta concordância com suas cláusulas e com o Contrato de Prestação de Serviço de Comunicação Multimídia e Provimento de Acesso à Internet (SCM/SVA), parte integrante deste documento, para que produza todos os seus efeitos legais.
 

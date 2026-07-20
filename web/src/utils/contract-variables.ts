@@ -8,7 +8,7 @@ export type ContractVariable = {
 export const CONTRACT_VARIABLES: ContractVariable[] = [
   { key: "nome", label: "Nome do assinante", group: "cliente" },
   { key: "cpf", label: "CPF/CNPJ", group: "cliente" },
-  { key: "rg", label: "RG/ID", group: "cliente" },
+  { key: "rg", label: "RG/CNH", hint: "Número do RG ou da CNH", group: "cliente" },
   { key: "data_nascimento", label: "Data de nascimento", group: "cliente" },
   { key: "naturalidade", label: "Naturalidade", group: "cliente" },
   { key: "pai", label: "Nome do pai", group: "cliente" },

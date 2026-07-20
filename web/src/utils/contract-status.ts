@@ -13,8 +13,8 @@ export const CONTRACT_STATUS_LABELS: Record<ContractStatus, string> = {
 };
 
 export const DOCUMENT_TYPE_LABELS = {
-  ID_FRONT: "Frente do documento",
-  ID_BACK: "Verso do documento",
+  ID_FRONT: "Frente do RG/CNH",
+  ID_BACK: "Verso do RG/CNH",
   SELFIE_WITH_ID: "Selfie segurando o documento",
 } as const;
 
