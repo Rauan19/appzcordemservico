@@ -12,6 +12,7 @@ import {
 } from "../lib/public-api";
 import type { ContractDocumentType, PublicContract } from "../types/api";
 import { DOCUMENT_TYPE_LABELS } from "../utils/contract-status";
+import { normalizeDocumentImage } from "../utils/document-image";
 import { renderTypedSignatureImage } from "../utils/typed-signature";
 import "./SignContractPage.css";
 
@@ -117,7 +118,14 @@ export function SignContractPage() {
     setPreviews((p) => ({ ...p, [type]: localPreview }));
     setPhotoNames((p) => ({ ...p, [type]: file.name }));
     try {
-      await publicUpload(token, type, file);
+      const normalized = await normalizeDocumentImage(file);
+      if (normalized !== file) {
+        URL.revokeObjectURL(localPreview);
+        const nextPreview = URL.createObjectURL(normalized);
+        setPreviews((p) => ({ ...p, [type]: nextPreview }));
+        setPhotoNames((p) => ({ ...p, [type]: normalized.name }));
+      }
+      await publicUpload(token, type, normalized);
       const updated = await publicApi<PublicContract>(`/public/contracts/${token}`);
       setContract(updated);
     } catch (e) {
