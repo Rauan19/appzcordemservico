@@ -39,10 +39,12 @@ export async function publicUpload(
   type: string,
   file: File,
 ): Promise<unknown> {
-  const url = `${base}/public/contracts/${token}/documents`;
+  // type na query + no form (antes do file): multipart do Fastify
+  // só garante fields que vêm antes do arquivo.
+  const url = `${base}/public/contracts/${token}/documents?type=${encodeURIComponent(type)}`;
   const form = new FormData();
-  form.append("file", file, file.name || "foto.jpg");
   form.append("type", type);
+  form.append("file", file, file.name || "foto.jpg");
 
   let res: Response;
   try {

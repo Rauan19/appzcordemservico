@@ -13,6 +13,22 @@ import {
 } from "./contract.schemas.ts";
 import { ContractService } from "./contract.service.ts";
 
+function extractMultipartField(field: unknown): string {
+  if (!field) return "";
+  if (Array.isArray(field)) return extractMultipartField(field[0]);
+  if (typeof field === "string") return field;
+  if (typeof field === "object" && field !== null && "value" in field) {
+    return String((field as { value: unknown }).value ?? "");
+  }
+  return "";
+}
+
+function extractQueryType(query: unknown): string {
+  if (!query || typeof query !== "object") return "";
+  const value = (query as { type?: unknown }).type;
+  return typeof value === "string" ? value : "";
+}
+
 export class ContractController {
   constructor(private readonly service = new ContractService()) {}
 
@@ -101,17 +117,17 @@ export class ContractController {
     const data = await req.file();
     if (!data) throw new BadRequestError("Arquivo obrigatório");
 
-    const typeField = data.fields.type;
+    // Consome o stream antes: fields enviados depois do file só aparecem depois.
+    const buffer = await data.toBuffer();
+
     const typeValue =
-      typeField && typeof typeField === "object" && "value" in typeField
-        ? String(typeField.value)
-        : "";
+      extractMultipartField(data.fields.type) ||
+      extractQueryType(req.query);
     const type = ContractDocumentTypeParamSchema.shape.type.safeParse(typeValue);
     if (!type.success) {
       throw new BadRequestError("Tipo de documento inválido");
     }
 
-    const buffer = await data.toBuffer();
     const mimeType = data.mimetype || "image/jpeg";
     const doc = await this.service.uploadDocument(
       token,
