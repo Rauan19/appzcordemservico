@@ -1,6 +1,6 @@
-const ALLOWED_MIME = new Set(["image/jpeg", "image/png", "image/webp"]);
-const MAX_EDGE_PX = 2000;
-const JPEG_QUALITY = 0.85;
+const MAX_EDGE_PX = 1600;
+const JPEG_QUALITY = 0.8;
+const TARGET_MAX_BYTES = 1.5 * 1024 * 1024;
 
 function isHeic(file: File) {
   const type = file.type.toLowerCase();
@@ -17,11 +17,30 @@ function baseName(fileName: string) {
   return fileName.replace(/\.[^.]+$/, "") || "documento";
 }
 
-async function blobToJpegFile(blob: Blob, fileName: string): Promise<File> {
-  return new File([blob], `${baseName(fileName)}.jpg`, { type: "image/jpeg" });
+function looksLikeImage(file: File) {
+  return file.type.startsWith("image/") || isHeic(file) || /\.(jpe?g|png|webp|heic|heif)$/i.test(file.name);
 }
 
-async function canvasToJpeg(source: CanvasImageSource, width: number, height: number, fileName: string) {
+async function blobToJpegFile(blob: Blob, fileName: string): Promise<File> {
+  return new File([blob], `${baseName(fileName)}.jpg`, { type: "image/jpeg", lastModified: Date.now() });
+}
+
+/** Cópia em memória — evita arquivo temporário da câmera sumir no Android. */
+export async function snapshotFile(file: File): Promise<File> {
+  const buffer = await file.arrayBuffer();
+  return new File([buffer], file.name || "foto.jpg", {
+    type: file.type || "image/jpeg",
+    lastModified: Date.now(),
+  });
+}
+
+async function canvasToJpeg(
+  source: CanvasImageSource,
+  width: number,
+  height: number,
+  fileName: string,
+  quality: number,
+) {
   const scale = Math.min(1, MAX_EDGE_PX / Math.max(width, height));
   const targetW = Math.max(1, Math.round(width * scale));
   const targetH = Math.max(1, Math.round(height * scale));
@@ -39,19 +58,39 @@ async function canvasToJpeg(source: CanvasImageSource, width: number, height: nu
     canvas.toBlob(
       (result) => (result ? resolve(result) : reject(new Error("Falha ao converter a foto"))),
       "image/jpeg",
-      JPEG_QUALITY,
+      quality,
     );
   });
 
   return blobToJpegFile(blob, fileName);
 }
 
-async function convertWithCanvas(file: File): Promise<File> {
-  const bitmap = await createImageBitmap(file);
+async function loadImageElement(file: File): Promise<HTMLImageElement> {
+  const url = URL.createObjectURL(file);
   try {
-    return await canvasToJpeg(bitmap, bitmap.width, bitmap.height, file.name);
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const el = new Image();
+      el.onload = () => resolve(el);
+      el.onerror = () => reject(new Error("Não foi possível abrir a foto"));
+      el.src = url;
+    });
+    return img;
   } finally {
-    bitmap.close();
+    URL.revokeObjectURL(url);
+  }
+}
+
+async function convertWithCanvas(file: File, quality = JPEG_QUALITY): Promise<File> {
+  try {
+    const bitmap = await createImageBitmap(file);
+    try {
+      return await canvasToJpeg(bitmap, bitmap.width, bitmap.height, file.name, quality);
+    } finally {
+      bitmap.close();
+    }
+  } catch {
+    const img = await loadImageElement(file);
+    return canvasToJpeg(img, img.naturalWidth, img.naturalHeight, file.name, quality);
   }
 }
 
@@ -67,9 +106,19 @@ async function convertHeic(file: File): Promise<File> {
   return convertWithCanvas(jpeg);
 }
 
-/** Converte HEIC e outros formatos para JPEG aceito pela API. */
+async function compressUntilSmallEnough(file: File): Promise<File> {
+  let quality = JPEG_QUALITY;
+  let result = await convertWithCanvas(file, quality);
+  while (result.size > TARGET_MAX_BYTES && quality > 0.45) {
+    quality -= 0.1;
+    result = await convertWithCanvas(file, quality);
+  }
+  return result;
+}
+
+/** Sempre gera JPEG compacto aceito pela API (câmera mobile costuma ser grande demais). */
 export async function normalizeDocumentImage(file: File): Promise<File> {
-  if (!file.type.startsWith("image/") && !isHeic(file)) {
+  if (!looksLikeImage(file)) {
     throw new Error("Envie uma foto (JPEG, PNG, WebP ou HEIC)");
   }
 
@@ -78,7 +127,7 @@ export async function normalizeDocumentImage(file: File): Promise<File> {
       return await convertHeic(file);
     } catch {
       try {
-        return await convertWithCanvas(file);
+        return await compressUntilSmallEnough(file);
       } catch {
         throw new Error(
           "Não foi possível ler esta foto HEIC. Tire a foto pelo app ou salve como JPEG na galeria.",
@@ -87,12 +136,8 @@ export async function normalizeDocumentImage(file: File): Promise<File> {
     }
   }
 
-  if (ALLOWED_MIME.has(file.type) && file.size <= 9 * 1024 * 1024) {
-    return file;
-  }
-
   try {
-    return await convertWithCanvas(file);
+    return await compressUntilSmallEnough(file);
   } catch {
     throw new Error("Não foi possível processar esta imagem. Tente outra foto em JPEG ou PNG.");
   }

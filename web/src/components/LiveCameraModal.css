@@ -1,0 +1,89 @@
+.live-cam-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(15, 23, 42, 0.72);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 12px;
+}
+
+.live-cam-sheet {
+  width: min(560px, 100%);
+  background: #0f172a;
+  color: #f8fafc;
+  border-radius: 16px 16px 12px 12px;
+  padding: 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.live-cam-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.live-cam-close {
+  min-height: 36px !important;
+}
+
+.live-cam-video-wrap {
+  position: relative;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 240px;
+}
+
+.live-cam-video {
+  display: block;
+  width: 100%;
+  max-height: min(62vh, 480px);
+  object-fit: cover;
+  background: #000;
+}
+
+.live-cam-loading {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e1;
+  font-size: 0.875rem;
+}
+
+.live-cam-error {
+  margin: 0 0 10px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #7f1d1d;
+  color: #fecaca;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.live-cam-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.live-cam-actions .btn {
+  min-height: 44px !important;
+}
+
+@media (min-width: 720px) {
+  .live-cam-overlay {
+    align-items: center;
+  }
+
+  .live-cam-sheet {
+    border-radius: 16px;
+  }
+}

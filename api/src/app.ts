@@ -6,7 +6,11 @@ import { registerErrorHandler } from "./http/error-handler.ts";
 import { registerJwt } from "./plugins/jwt.ts";
 
 export async function buildApp(): Promise<FastifyInstance> {
-  const app = Fastify({ logger: true });
+  const app = Fastify({
+    logger: true,
+    // Precisa caber o multipart das fotos (câmera mobile costuma ser grande).
+    bodyLimit: env.UPLOAD_MAX_SIZE_MB * 1024 * 1024,
+  });
 
   await app.register(cors, {
     origin: (origin, cb) => {

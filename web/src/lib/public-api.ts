@@ -7,9 +7,13 @@ type ApiErrorBody = {
 
 export class PublicApiError extends Error {
   status: number;
-  constructor(status: number, message?: string) {
+  url?: string;
+  bodyText?: string;
+  constructor(status: number, message?: string, extras?: { url?: string; bodyText?: string }) {
     super(message ?? "Erro na requisição");
     this.status = status;
+    this.url = extras?.url;
+    this.bodyText = extras?.bodyText;
     this.name = "PublicApiError";
   }
 }
@@ -35,18 +39,34 @@ export async function publicUpload(
   type: string,
   file: File,
 ): Promise<unknown> {
+  const url = `${base}/public/contracts/${token}/documents`;
   const form = new FormData();
-  form.append("file", file);
+  form.append("file", file, file.name || "foto.jpg");
   form.append("type", type);
 
-  const res = await fetch(`${base}/public/contracts/${token}/documents`, {
-    method: "POST",
-    body: form,
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      body: form,
+    });
+  } catch (e) {
+    const cause = e instanceof Error ? e.message : String(e);
+    throw new PublicApiError(0, `Failed to fetch (${cause})`, { url });
+  }
 
-  const data = await res.json().catch(() => ({}));
+  const raw = await res.text();
+  let data: ApiErrorBody = {};
+  try {
+    data = raw ? (JSON.parse(raw) as ApiErrorBody) : {};
+  } catch {
+    data = { message: raw.slice(0, 300) || undefined };
+  }
   if (!res.ok) {
-    throw new PublicApiError(res.status, data.message ?? data.error);
+    throw new PublicApiError(res.status, data.message ?? data.error ?? `HTTP ${res.status}`, {
+      url,
+      bodyText: raw.slice(0, 500),
+    });
   }
   return data;
 }

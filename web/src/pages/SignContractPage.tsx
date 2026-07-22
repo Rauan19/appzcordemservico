@@ -1,9 +1,10 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { DocumentPhotoField } from "../components/DocumentPhotoField";
+import { DocumentPhotoField, type PhotoDebugInfo } from "../components/DocumentPhotoField";
 import { SignedContractView } from "../components/SignedContractView";
 import { TypedSignatureField, type SignatureMode } from "../components/TypedSignatureField";
 import {
+  PublicApiError,
   publicApi,
   publicDocumentUrl,
   publicSign,
@@ -12,7 +13,7 @@ import {
 } from "../lib/public-api";
 import type { ContractDocumentType, PublicContract } from "../types/api";
 import { DOCUMENT_TYPE_LABELS } from "../utils/contract-status";
-import { normalizeDocumentImage } from "../utils/document-image";
+import { normalizeDocumentImage, snapshotFile } from "../utils/document-image";
 import { renderTypedSignatureImage } from "../utils/typed-signature";
 import "./SignContractPage.css";
 
@@ -71,6 +72,7 @@ export function SignContractPage() {
   const [previews, setPreviews] = useState<Partial<Record<ContractDocumentType, string>>>({});
   const [photoNames, setPhotoNames] = useState<Partial<Record<ContractDocumentType, string>>>({});
   const [photoErrors, setPhotoErrors] = useState<Partial<Record<ContractDocumentType, string>>>({});
+  const [photoDebug, setPhotoDebug] = useState<Partial<Record<ContractDocumentType, PhotoDebugInfo>>>({});
   const [includeDocumentAttachments, setIncludeDocumentAttachments] = useState(false);
   const [docKind, setDocKind] = useState<IdDocumentKind | null>(null);
   const docFields = docKind ? buildDocFields(docKind) : [];
@@ -114,26 +116,52 @@ export function SignContractPage() {
     setUploading(type);
     setError("");
     setPhotoErrors((p) => ({ ...p, [type]: undefined }));
-    const localPreview = URL.createObjectURL(file);
-    setPreviews((p) => ({ ...p, [type]: localPreview }));
+    setPhotoDebug((p) => ({ ...p, [type]: undefined }));
     setPhotoNames((p) => ({ ...p, [type]: file.name }));
+    let stage = "inicio";
+    let working: File = file;
     try {
-      const normalized = await normalizeDocumentImage(file);
-      if (normalized !== file) {
-        URL.revokeObjectURL(localPreview);
-        const nextPreview = URL.createObjectURL(normalized);
-        setPreviews((p) => ({ ...p, [type]: nextPreview }));
-        setPhotoNames((p) => ({ ...p, [type]: normalized.name }));
-      }
+      stage = "snapshot";
+      // Cópia imediata: no Android o arquivo temp da câmera some se o upload demorar.
+      const stable = await snapshotFile(file);
+      working = stable;
+      const localPreview = URL.createObjectURL(stable);
+      setPreviews((p) => ({ ...p, [type]: localPreview }));
+      stage = "compressao";
+      const normalized = await normalizeDocumentImage(stable);
+      working = normalized;
+      URL.revokeObjectURL(localPreview);
+      const nextPreview = URL.createObjectURL(normalized);
+      setPreviews((p) => ({ ...p, [type]: nextPreview }));
+      setPhotoNames((p) => ({ ...p, [type]: normalized.name }));
+      stage = "upload";
       await publicUpload(token, type, normalized);
+      stage = "reload";
       const updated = await publicApi<PublicContract>(`/public/contracts/${token}`);
       setContract(updated);
     } catch (e) {
       const label = docFields.find((field) => field.type === type)?.label ?? "foto";
       const detail = e instanceof Error ? e.message : "Erro no upload";
+      const apiErr = e instanceof PublicApiError ? e : null;
+      const friendly = /Failed to fetch|network|carregar/i.test(detail)
+        ? "Falha de conexão ao enviar a foto (arquivo grande, rede ou servidor). Veja os detalhes técnicos abaixo."
+        : detail;
       setPhotoErrors((p) => ({
         ...p,
-        [type]: `Não foi possível enviar ${label.toLowerCase()}. ${detail}. Tente tirar outra foto ou escolher da galeria.`,
+        [type]: `Não foi possível enviar ${label.toLowerCase()}. ${friendly}`,
+      }));
+      setPhotoDebug((p) => ({
+        ...p,
+        [type]: {
+          message: apiErr?.bodyText ? `${detail} | body: ${apiErr.bodyText}` : detail,
+          status: apiErr?.status,
+          url: apiErr?.url,
+          fileName: working.name,
+          fileType: working.type || "(vazio)",
+          fileSizeMb: (working.size / (1024 * 1024)).toFixed(2),
+          stage,
+          at: new Date().toLocaleString("pt-BR"),
+        },
       }));
     } finally {
       setUploading(null);
@@ -302,6 +330,7 @@ export function SignContractPage() {
                     preview={previews[type]}
                     fileName={photoNames[type]}
                     error={photoErrors[type]}
+                    debug={photoDebug[type]}
                     uploaded={!!isUploaded(type)}
                     uploading={uploading === type}
                     onSelect={(file) => handleFile(type, file)}

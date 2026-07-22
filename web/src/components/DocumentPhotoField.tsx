@@ -1,5 +1,17 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { LiveCameraModal } from "./LiveCameraModal";
 import "./DocumentPhotoField.css";
+
+export type PhotoDebugInfo = {
+  message: string;
+  status?: number;
+  url?: string;
+  fileName?: string;
+  fileType?: string;
+  fileSizeMb?: string;
+  stage?: string;
+  at?: string;
+};
 
 type Props = {
   step: number;
@@ -8,6 +20,7 @@ type Props = {
   preview?: string;
   fileName?: string;
   error?: string;
+  debug?: PhotoDebugInfo;
   uploaded: boolean;
   uploading: boolean;
   onSelect: (file: File) => void;
@@ -20,17 +33,42 @@ export function DocumentPhotoField({
   preview,
   fileName,
   error,
+  debug,
   uploaded,
   uploading,
   onSelect,
 }: Props) {
-  const cameraRef = useRef<HTMLInputElement>(null);
+  const cameraFileRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
+  const [liveOpen, setLiveOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) onSelect(file);
     e.target.value = "";
+  }
+
+  async function copyDebug() {
+    if (!debug) return;
+    const text = [
+      `erro: ${debug.message}`,
+      `status: ${debug.status ?? "-"}`,
+      `url: ${debug.url ?? "-"}`,
+      `arquivo: ${debug.fileName ?? "-"}`,
+      `tipo: ${debug.fileType ?? "-"}`,
+      `tamanho_mb: ${debug.fileSizeMb ?? "-"}`,
+      `etapa: ${debug.stage ?? "-"}`,
+      `quando: ${debug.at ?? "-"}`,
+      `ua: ${navigator.userAgent}`,
+    ].join("\n");
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.prompt("Copie o erro abaixo:", text);
+    }
   }
 
   return (
@@ -66,14 +104,41 @@ export function DocumentPhotoField({
 
       {error && <p className="doc-photo-error">{error}</p>}
 
+      {debug && (
+        <div className="doc-photo-debug">
+          <strong>Detalhes técnicos (para suporte)</strong>
+          <pre>
+            {`status: ${debug.status ?? "-"}
+url: ${debug.url ?? "-"}
+arquivo: ${debug.fileName ?? "-"}
+tipo: ${debug.fileType ?? "-"}
+tamanho: ${debug.fileSizeMb ?? "-"} MB
+etapa: ${debug.stage ?? "-"}
+quando: ${debug.at ?? "-"}
+msg: ${debug.message}`}
+          </pre>
+          <button type="button" className="btn btn-secondary doc-photo-debug-copy" onClick={copyDebug}>
+            {copied ? "Copiado!" : "Copiar erro"}
+          </button>
+        </div>
+      )}
+
       <div className="doc-photo-actions">
         <button
           type="button"
           className="btn btn-primary doc-photo-btn"
           disabled={uploading}
-          onClick={() => cameraRef.current?.click()}
+          onClick={() => setLiveOpen(true)}
         >
-          {uploading ? "Enviando..." : uploaded ? "Trocar foto" : "Tirar foto"}
+          {uploading ? "Enviando..." : uploaded ? "Abrir câmera" : "Abrir câmera"}
+        </button>
+        <button
+          type="button"
+          className="btn btn-secondary doc-photo-btn"
+          disabled={uploading}
+          onClick={() => cameraFileRef.current?.click()}
+        >
+          Câmera do aparelho
         </button>
         <button
           type="button"
@@ -86,7 +151,7 @@ export function DocumentPhotoField({
       </div>
 
       <input
-        ref={cameraRef}
+        ref={cameraFileRef}
         type="file"
         accept="image/*"
         capture="environment"
@@ -99,6 +164,13 @@ export function DocumentPhotoField({
         accept="image/*"
         className="doc-photo-input-hidden"
         onChange={handleChange}
+      />
+
+      <LiveCameraModal
+        open={liveOpen}
+        title={label}
+        onClose={() => setLiveOpen(false)}
+        onCapture={onSelect}
       />
     </div>
   );
