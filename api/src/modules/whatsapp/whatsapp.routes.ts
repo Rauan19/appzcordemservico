@@ -4,7 +4,7 @@ import { requireRoles } from "../../http/auth.ts";
 import { WhatsappService } from "./whatsapp.service.ts";
 
 const nameParams = z.object({ name: z.string() });
-const createBody = z.object({ name: z.string().trim() });
+const createBody = z.object({ name: z.string().trim(), bot: z.string().optional() });
 
 export async function whatsappRoutes(app: FastifyInstance) {
   const service = new WhatsappService();
@@ -13,8 +13,8 @@ export async function whatsappRoutes(app: FastifyInstance) {
   app.get("/instances", async () => service.list());
 
   app.post("/instances", async (req, reply) => {
-    const { name } = createBody.parse(req.body);
-    return reply.status(201).send(await service.create(name));
+    const { name, bot } = createBody.parse(req.body);
+    return reply.status(201).send(await service.create(name, bot));
   });
 
   app.get("/instances/:name/qrcode", async (req) => service.connect(nameParams.parse(req.params).name));

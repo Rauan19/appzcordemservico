@@ -23,6 +23,8 @@ const EnvSchema = z.object({
   EVOLUTION_WEBHOOK_URL: z.string().optional(),
   /** Prefixo das instâncias deste painel (ex.: zc_). Só as que começam com ele são listadas, criadas e contadas. */
   EVOLUTION_INSTANCE_PREFIX: z.string().default(""),
+  /** Vários bots: "prefixo=urlDoWebhook,prefixo2=urlDoWebhook2". Tem prioridade sobre EVOLUTION_INSTANCE_PREFIX/WEBHOOK_URL. */
+  EVOLUTION_BOTS: z.string().optional(),
   WHATSAPP_MAX_INSTANCES: z.coerce.number().int().positive().default(5),
 });
 

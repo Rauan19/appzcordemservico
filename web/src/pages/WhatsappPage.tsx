@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useCanAccess } from "../contexts/AuthContext";
 import {
   adminApi,
+  type WhatsappBot,
   type WhatsappInstance,
   type WhatsappQr,
   type WhatsappStatus,
@@ -29,7 +30,9 @@ function qrSrc(qr: WhatsappQr) {
 export function WhatsappPage() {
   const isAdmin = useCanAccess(["ADMIN"]);
   const [instances, setInstances] = useState<WhatsappInstance[]>([]);
-  const [max, setMax] = useState(2);
+  const [max, setMax] = useState(5);
+  const [bots, setBots] = useState<WhatsappBot[]>([]);
+  const [newBot, setNewBot] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -48,6 +51,8 @@ export function WhatsappPage() {
       .then((data) => {
         setInstances(data.instances);
         setMax(data.max);
+        setBots(data.bots);
+        setNewBot((current) => current || data.bots[0]?.prefix || "");
         const current = qrForRef.current;
         if (current && data.instances.find((i) => i.name === current)?.status === "open") {
           setQrFor(null);
@@ -97,7 +102,7 @@ export function WhatsappPage() {
     const name = newName.trim();
     if (!name) return;
     await run("__create", async () => {
-      const res = await adminApi.createWhatsappInstance(name);
+      const res = await adminApi.createWhatsappInstance(name, newBot);
       setNewName("");
       setQrFor(res.instance.name);
       setQr(res.qr);
@@ -159,6 +164,18 @@ export function WhatsappPage() {
       <div className="grid-2 whatsapp-grid">
         <form className="card card-accent" onSubmit={handleCreate}>
           <h3>Nova instância</h3>
+          {bots.length > 1 ? (
+            <div className="field">
+              <label htmlFor="wa-bot">Bot que vai atender *</label>
+              <select id="wa-bot" value={newBot} onChange={(e) => setNewBot(e.target.value)} disabled={full}>
+                {bots.map((b) => (
+                  <option key={b.prefix} value={b.prefix}>
+                    {b.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
           <div className="field">
             <label htmlFor="wa-name">Nome da instância *</label>
             <input
@@ -227,6 +244,7 @@ export function WhatsappPage() {
               <thead>
                 <tr>
                   <th>Instância</th>
+                  <th>Bot</th>
                   <th>Número</th>
                   <th>Status</th>
                   <th>Ações</th>
@@ -239,6 +257,7 @@ export function WhatsappPage() {
                       <strong>{i.name}</strong>
                       {i.profileName ? <div className="whatsapp-sub">{i.profileName}</div> : null}
                     </td>
+                    <td>{i.bot ?? "—"}</td>
                     <td>{i.number ? `+${i.number}` : "—"}</td>
                     <td>
                       <span className={`badge ${statusBadge[i.status]}`}>{statusLabel[i.status]}</span>

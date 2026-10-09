@@ -9,6 +9,8 @@ export type WhatsappInstance = {
   number: string | null;
   profileName: string | null;
   profilePicUrl: string | null;
+  /** Bot que atende a instância (rótulo do prefixo) */
+  bot?: string;
 };
 
 export type WhatsappQr = {
@@ -80,30 +82,75 @@ function assertName(name: string) {
   }
 }
 
-const prefix = () => env.EVOLUTION_INSTANCE_PREFIX;
+export type WhatsappBot = { prefix: string; label: string; webhookUrl: string | null };
 
-/** Nome completo na Evolution: aplica o prefixo deste painel, sem duplicar. */
-function withPrefix(name: string) {
-  return name.startsWith(prefix()) ? name : `${prefix()}${name}`;
+/**
+ * Bots que este painel alimenta. Cada bot tem um prefixo de instância e a URL do webhook dele.
+ * EVOLUTION_BOTS="zc_=http://172.21.0.1:7000/webhook,outro_=http://172.21.0.1:7001/webhook"
+ * Sem EVOLUTION_BOTS, vale o par antigo EVOLUTION_INSTANCE_PREFIX + EVOLUTION_WEBHOOK_URL.
+ */
+function bots(): WhatsappBot[] {
+  const parsed = (env.EVOLUTION_BOTS ?? "")
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .map((entry) => {
+      const cut = entry.indexOf("=");
+      const prefix = (cut === -1 ? entry : entry.slice(0, cut)).trim();
+      const webhookUrl = cut === -1 ? null : entry.slice(cut + 1).trim() || null;
+      return { prefix, label: prefix.replace(/[_-]+$/, "") || prefix, webhookUrl };
+    })
+    .filter((b) => b.prefix);
+
+  if (parsed.length > 0) return parsed;
+  const prefix = env.EVOLUTION_INSTANCE_PREFIX;
+  return [{ prefix, label: prefix.replace(/[_-]+$/, "") || "padrão", webhookUrl: env.EVOLUTION_WEBHOOK_URL ?? null }];
+}
+
+/** Bot dono da instância: o de prefixo mais longo que casa com o nome. */
+function botOf(name: string): WhatsappBot | null {
+  return (
+    bots()
+      .filter((b) => name.startsWith(b.prefix))
+      .sort((a, b) => b.prefix.length - a.prefix.length)[0] ?? null
+  );
 }
 
 /** Impede operar em instâncias de outro painel/bot que dividem a mesma Evolution. */
 function assertOwned(name: string) {
   assertName(name);
-  if (!name.startsWith(prefix())) {
+  if (!botOf(name)) {
     throw new NotFoundError("Instância não pertence a este painel.");
   }
 }
 
 export class WhatsappService {
-  async list(): Promise<{ instances: WhatsappInstance[]; max: number }> {
+  async list(): Promise<{
+    instances: WhatsappInstance[];
+    max: number;
+    bots: Array<{ prefix: string; label: string }>;
+  }> {
     const data = await evo<unknown[]>("GET", "/instance/fetchInstances");
-    const instances = (Array.isArray(data) ? data : []).map(mapInstance).filter((i) => i.name && i.name.startsWith(prefix()));
-    return { instances, max: env.WHATSAPP_MAX_INSTANCES };
+    const instances = (Array.isArray(data) ? data : [])
+      .map(mapInstance)
+      .filter((i) => i.name && botOf(i.name))
+      .map((i) => ({ ...i, bot: botOf(i.name)!.label }));
+    return {
+      instances,
+      max: env.WHATSAPP_MAX_INSTANCES,
+      bots: bots().map(({ prefix, label }) => ({ prefix, label })),
+    };
   }
 
-  async create(rawName: string): Promise<{ instance: WhatsappInstance; qr: WhatsappQr }> {
-    const name = withPrefix(rawName);
+  async create(
+    rawName: string,
+    botPrefix?: string,
+  ): Promise<{ instance: WhatsappInstance; qr: WhatsappQr }> {
+    const available = bots();
+    const bot = botPrefix === undefined ? (available.length === 1 ? available[0] : undefined) : available.find((b) => b.prefix === botPrefix);
+    if (!bot) throw new BadRequestError("Escolha o bot que vai atender esta instância.");
+
+    const name = rawName.startsWith(bot.prefix) ? rawName : `${bot.prefix}${rawName}`;
     assertName(name);
     const { instances, max } = await this.list();
     if (instances.length >= max) {
@@ -117,10 +164,10 @@ export class WhatsappService {
       instanceName: name,
       qrcode: true,
       integration: "WHATSAPP-BAILEYS",
-      ...(env.EVOLUTION_WEBHOOK_URL
+      ...(bot.webhookUrl
         ? {
             webhook: {
-              url: env.EVOLUTION_WEBHOOK_URL,
+              url: bot.webhookUrl,
               byEvents: false,
               base64: true,
               events: WEBHOOK_EVENTS,
@@ -130,7 +177,7 @@ export class WhatsappService {
     });
 
     return {
-      instance: { name, status: "connecting", number: null, profileName: null, profilePicUrl: null },
+      instance: { name, status: "connecting", number: null, profileName: null, profilePicUrl: null, bot: bot.label },
       qr: mapQr(created),
     };
   }

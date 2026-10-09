@@ -24,7 +24,9 @@ export type WhatsappInstance = {
   number: string | null;
   profileName: string | null;
   profilePicUrl: string | null;
+  bot?: string;
 };
+export type WhatsappBot = { prefix: string; label: string };
 export type WhatsappQr = { base64: string | null; pairingCode: string | null };
 
 export type ListOrdersParams = {
@@ -291,13 +293,15 @@ export const adminApi = {
   },
 
   listWhatsappInstances() {
-    return api<{ instances: WhatsappInstance[]; max: number }>("/whatsapp/instances");
+    return api<{ instances: WhatsappInstance[]; max: number; bots: WhatsappBot[] }>(
+      "/whatsapp/instances",
+    );
   },
 
-  createWhatsappInstance(name: string) {
+  createWhatsappInstance(name: string, bot?: string) {
     return api<{ instance: WhatsappInstance; qr: WhatsappQr }>("/whatsapp/instances", {
       method: "POST",
-      body: { name },
+      body: { name, bot },
     });
   },
 
