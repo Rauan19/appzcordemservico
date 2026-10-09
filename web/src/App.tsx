@@ -12,6 +12,7 @@ import { StockPage } from "./pages/StockPage";
 import { UsersPage } from "./pages/UsersPage";
 import { EvaluationsPage } from "./pages/EvaluationsPage";
 import { PushPage } from "./pages/PushPage";
+import { WhatsappPage } from "./pages/WhatsappPage";
 import { ContractTemplatesPage } from "./pages/ContractTemplatesPage";
 import { ContractsPage } from "./pages/ContractsPage";
 import { ContractDetailPage } from "./pages/ContractDetailPage";
@@ -50,6 +51,7 @@ export default function App() {
           <Route path="contracts" element={<ContractsPage />} />
           <Route path="contracts/:id" element={<ContractDetailPage />} />
           <Route path="push" element={<PushPage />} />
+          <Route path="whatsapp" element={<WhatsappPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

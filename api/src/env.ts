@@ -16,6 +16,14 @@ const EnvSchema = z.object({
   UPLOAD_MAX_SIZE_MB: z.coerce.number().positive().default(10),
   /** URL pública do painel web (para gerar link de assinatura) */
   PUBLIC_WEB_URL: z.string().optional(),
+  /** Evolution API (WhatsApp). A chave fica só na API; o painel nunca a recebe. */
+  EVOLUTION_URL: z.string().optional(),
+  EVOLUTION_API_KEY: z.string().optional(),
+  /** URL do bot que recebe os eventos das instâncias (roda fora deste projeto) */
+  EVOLUTION_WEBHOOK_URL: z.string().optional(),
+  /** Prefixo das instâncias deste painel (ex.: zc_). Só as que começam com ele são listadas, criadas e contadas. */
+  EVOLUTION_INSTANCE_PREFIX: z.string().default(""),
+  WHATSAPP_MAX_INSTANCES: z.coerce.number().int().positive().default(5),
 });
 
 function parseCorsOrigins(raw?: string) {

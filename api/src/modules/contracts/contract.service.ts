@@ -84,22 +84,33 @@ export class ContractService {
 
     const variables = buildCustomerVariables(customer, input.variables);
     const content = renderContractContent(template.content, variables);
-    const code = await nextContractCode();
     const expiresAt = input.expiresInDays
       ? new Date(Date.now() + input.expiresInDays * 24 * 60 * 60 * 1000)
       : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    return this.repo.create({
-      code,
-      customerId: input.customerId,
-      templateId: input.templateId,
-      title: input.title ?? `Contrato  ${customer.fullName}`,
-      content,
-      variables,
-      serviceOrderId: input.serviceOrderId,
-      expiresAt,
-      createdById: input.createdById,
-    });
+    // O código é sequencial (CTR-AAAA-0001). Dois contratos criados ao mesmo tempo
+    // calculam o mesmo número; o banco recusa o segundo (P2002) e tentamos de novo.
+    for (let attempt = 1; ; attempt++) {
+      try {
+        return await this.repo.create({
+          code: await nextContractCode(),
+          customerId: input.customerId,
+          templateId: input.templateId,
+          title: input.title ?? `Contrato  ${customer.fullName}`,
+          content,
+          variables,
+          serviceOrderId: input.serviceOrderId,
+          expiresAt,
+          createdById: input.createdById,
+        });
+      } catch (error) {
+        const duplicatedCode =
+          (error as { code?: string }).code === "P2002" &&
+          String((error as { meta?: { target?: unknown } }).meta?.target).includes("code");
+        if (!duplicatedCode || attempt >= 5) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 20 * attempt + Math.random() * 40));
+      }
+    }
   }
 
   async send(id: string) {

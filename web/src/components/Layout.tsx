@@ -12,6 +12,7 @@ const links = [
   { to: "/stock", label: "Estoque", roles: ["ADMIN", "MANAGER", "STOCK"] as const },
   { to: "/users", label: "Usuários", roles: ["ADMIN"] as const },
   { to: "/push", label: "Push", roles: ["ADMIN"] as const },
+  { to: "/whatsapp", label: "Conectar WhatsApp", roles: ["ADMIN"] as const },
 ];
 
 export function Layout() {

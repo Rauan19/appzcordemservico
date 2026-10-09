@@ -56,7 +56,13 @@ function resolveInitialStep(data: PublicContract) {
   return 0;
 }
 
+/** `key={token}` zera todo o estado (fotos, CPF, aceite) ao abrir outro contrato do mesmo cliente. */
 export function SignContractPage() {
+  const { token } = useParams<{ token: string }>();
+  return <SignContract key={token} />;
+}
+
+function SignContract() {
   const { token } = useParams<{ token: string }>();
   const [contract, setContract] = useState<PublicContract | null>(null);
   const [step, setStep] = useState(0);

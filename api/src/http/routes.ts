@@ -12,6 +12,7 @@ import { userRoutes } from "../modules/users/user.routes.ts";
 import { evaluationRoutes } from "../modules/evaluations/evaluation.routes.ts";
 import { customerRatingRoutes } from "../modules/customer-ratings/customer-rating.routes.ts";
 import { pushRoutes } from "../modules/push/push.routes.ts";
+import { whatsappRoutes } from "../modules/whatsapp/whatsapp.routes.ts";
 import {
   contractRoutes,
   contractTemplateRoutes,
@@ -43,6 +44,7 @@ export async function registerRoutes(app: FastifyInstance) {
     protectedRoutes.register(evaluationRoutes, { prefix: "/evaluations" });
     protectedRoutes.register(customerRatingRoutes, { prefix: "/customer-ratings" });
     protectedRoutes.register(pushRoutes, { prefix: "/push" });
+    protectedRoutes.register(whatsappRoutes, { prefix: "/whatsapp" });
     protectedRoutes.register(contractTemplateRoutes, { prefix: "/contract-templates" });
     protectedRoutes.register(contractRoutes, { prefix: "/contracts" });
   });

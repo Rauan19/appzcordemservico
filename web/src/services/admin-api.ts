@@ -17,6 +17,16 @@ import type {
 } from "../types/api";
 import { api, apiBlob } from "../lib/api";
 
+export type WhatsappStatus = "open" | "connecting" | "close";
+export type WhatsappInstance = {
+  name: string;
+  status: WhatsappStatus;
+  number: string | null;
+  profileName: string | null;
+  profilePicUrl: string | null;
+};
+export type WhatsappQr = { base64: string | null; pairingCode: string | null };
+
 export type ListOrdersParams = {
   status?: ServiceOrderStatus;
   priority?: string;
@@ -278,6 +288,37 @@ export const adminApi = {
       "/stock/set-balance",
       { method: "POST", body: data },
     );
+  },
+
+  listWhatsappInstances() {
+    return api<{ instances: WhatsappInstance[]; max: number }>("/whatsapp/instances");
+  },
+
+  createWhatsappInstance(name: string) {
+    return api<{ instance: WhatsappInstance; qr: WhatsappQr }>("/whatsapp/instances", {
+      method: "POST",
+      body: { name },
+    });
+  },
+
+  getWhatsappQr(name: string) {
+    return api<WhatsappQr>(`/whatsapp/instances/${encodeURIComponent(name)}/qrcode`);
+  },
+
+  getWhatsappState(name: string) {
+    return api<{ status: WhatsappStatus }>(`/whatsapp/instances/${encodeURIComponent(name)}/state`);
+  },
+
+  disconnectWhatsapp(name: string) {
+    return api<{ ok: true }>(`/whatsapp/instances/${encodeURIComponent(name)}/disconnect`, {
+      method: "POST",
+    });
+  },
+
+  deleteWhatsappInstance(name: string) {
+    return api<{ ok: true }>(`/whatsapp/instances/${encodeURIComponent(name)}`, {
+      method: "DELETE",
+    });
   },
 
   getPushOverview() {

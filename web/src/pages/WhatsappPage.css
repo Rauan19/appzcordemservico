@@ -1,0 +1,31 @@
+.whatsapp-grid {
+  margin-bottom: 1rem;
+}
+
+.whatsapp-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.whatsapp-qr-img {
+  width: 260px;
+  height: 260px;
+  background: #fff;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.whatsapp-hint,
+.whatsapp-sub {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.whatsapp-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
