@@ -396,6 +396,7 @@ export const adminApi = {
       content?: string;
       variables?: Record<string, string>;
       expiresInDays?: number;
+      regenerate?: boolean;
     },
   ) {
     return api<Contract>(`/contracts/${id}`, { method: "PATCH", body: data });

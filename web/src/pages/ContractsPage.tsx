@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CustomerPicker } from "../components/CustomerPicker";
+import { ContractEditModal, canEditContract } from "../components/ContractEditModal";
 import { Modal } from "../components/Modal";
 import { adminApi } from "../services/admin-api";
 import type { Contract, ContractStatus, ContractTemplate, Customer } from "../types/api";
@@ -78,6 +79,7 @@ export function ContractsPage() {
   const [statusFilter, setStatusFilter] = useState<ContractStatus | undefined>();
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState<Contract | null>(null);
   const [saving, setSaving] = useState(false);
   const [customerId, setCustomerId] = useState("");
   const [templateId, setTemplateId] = useState("");
@@ -280,6 +282,11 @@ export function ContractsPage() {
                     <Link to={`/contracts/${c.id}`} className="btn btn-secondary">
                       Ver
                     </Link>
+                    {canEditContract(c.status) && (
+                      <button type="button" className="btn btn-secondary" onClick={() => setEditing(c)}>
+                        Editar
+                      </button>
+                    )}
                     {c.status !== "APPROVED" && c.status !== "CANCELED" && (
                       <button type="button" className="btn btn-secondary" onClick={() => copyLink(c)}>
                         Copiar link
@@ -293,6 +300,16 @@ export function ContractsPage() {
           </table>
         </div>
       )}
+
+      <ContractEditModal
+        contract={editing}
+        onClose={() => setEditing(null)}
+        onSaved={(updated) => {
+          setContracts((prev) => prev.map((x) => (x.id === updated.id ? { ...x, ...updated } : x)));
+          setEditing(null);
+          setSuccess(`Contrato ${updated.code} atualizado.`);
+        }}
+      />
 
       <Modal open={modalOpen} title="Novo contrato" onClose={() => !saving && setModalOpen(false)} wide>
         <form onSubmit={handleCreate}>

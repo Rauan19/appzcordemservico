@@ -44,6 +44,8 @@ export const UpdateContractSchema = z.object({
   content: z.string().min(1).optional(),
   variables: z.record(z.string(), z.string()).optional(),
   expiresInDays: z.number().int().positive().max(90).optional(),
+  /** Refaz o texto a partir do modelo com as variáveis enviadas (ignora `content`). */
+  regenerate: z.boolean().optional(),
 });
 
 export const RejectContractSchema = z.object({

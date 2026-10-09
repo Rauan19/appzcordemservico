@@ -141,6 +141,7 @@ export class ContractService {
       content?: string;
       variables?: Record<string, string>;
       expiresInDays?: number;
+      regenerate?: boolean;
     },
   ) {
     const contract = await this.getById(id);
@@ -154,9 +155,20 @@ export class ContractService {
       ? new Date(Date.now() + input.expiresInDays * 24 * 60 * 60 * 1000)
       : undefined;
 
+    let content = input.content;
+    if (input.regenerate) {
+      const template = await this.templateRepo.findById(contract.templateId);
+      if (!template) throw new NotFoundError("Modelo do contrato não encontrado");
+      const merged = buildCustomerVariables(contract.customer, {
+        ...((contract.variables as Record<string, string> | null) ?? {}),
+        ...(input.variables ?? {}),
+      });
+      content = renderContractContent(template.content, merged);
+    }
+
     return this.repo.update(id, {
       title: input.title,
-      content: input.content,
+      content,
       variables: input.variables,
       expiresAt,
     });

@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Modal } from "../components/Modal";
+import { ContractEditModal, canEditContract } from "../components/ContractEditModal";
 import { SignedContractView } from "../components/SignedContractView";
 import { adminApi } from "../services/admin-api";
 import type { Contract, ContractDocumentType } from "../types/api";
@@ -8,30 +8,6 @@ import { CONTRACT_STATUS_LABELS, DOCUMENT_TYPE_LABELS, contractStatusClass } fro
 import "./ContractDetailPage.css";
 
 const DOC_TYPES: ContractDocumentType[] = ["ID_FRONT", "ID_BACK", "SELFIE_WITH_ID"];
-
-type VariableRow = {
-  id: string;
-  key: string;
-  value: string;
-};
-
-function normalizeVariableKey(value: string) {
-  return value
-    .trim()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9_]+/g, "_")
-    .replace(/^_+|_+$/g, "");
-}
-
-function variablesToRows(variables: Record<string, string> = {}) {
-  return Object.entries(variables).map(([key, value], index) => ({
-    id: `${key}-${index}`,
-    key,
-    value,
-  }));
-}
 
 export function ContractDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -43,10 +19,7 @@ export function ContractDetailPage() {
   const [showReject, setShowReject] = useState(false);
   const [acting, setActing] = useState(false);
   const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
-  const [editOpen, setEditOpen] = useState(false);
-  const [editTitle, setEditTitle] = useState("");
-  const [editContent, setEditContent] = useState("");
-  const [editVariables, setEditVariables] = useState<VariableRow[]>([]);
+  const [editing, setEditing] = useState<Contract | null>(null);
   const [includeDocumentAttachments, setIncludeDocumentAttachments] = useState(false);
 
   function load() {
@@ -114,52 +87,6 @@ export function ContractDetailPage() {
       setSuccessMsg("Link enviado/gerado e copiado. Envie para o cliente.");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erro");
-    } finally {
-      setActing(false);
-    }
-  }
-
-  function openEdit() {
-    if (!contract) return;
-    setEditTitle(contract.title);
-    setEditContent(contract.content);
-    setEditVariables(variablesToRows(contract.variables ?? {}));
-    setEditOpen(true);
-    setError("");
-  }
-
-  function updateEditVariable(id: string, field: "key" | "value", value: string) {
-    setEditVariables((prev) => prev.map((row) => (row.id === id ? { ...row, [field]: value } : row)));
-  }
-
-  function addEditVariable() {
-    setEditVariables((prev) => [...prev, { id: `new-${Date.now()}`, key: "", value: "" }]);
-  }
-
-  function removeEditVariable(id: string) {
-    setEditVariables((prev) => prev.filter((row) => row.id !== id));
-  }
-
-  async function handleEditSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (!contract) return;
-    setActing(true);
-    try {
-      const variables = Object.fromEntries(
-        editVariables
-          .map((row) => [normalizeVariableKey(row.key), row.value.trim()] as const)
-          .filter(([key, value]) => key && value),
-      );
-      const updated = await adminApi.updateContract(contract.id, {
-        title: editTitle,
-        content: editContent,
-        variables,
-      });
-      setContract(updated);
-      setEditOpen(false);
-      setSuccessMsg("Contrato atualizado.");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao editar contrato");
     } finally {
       setActing(false);
     }
@@ -251,8 +178,8 @@ export function ContractDetailPage() {
           </span>
         </div>
         <div className="card-actions">
-          {!["SIGNED", "APPROVED", "CANCELED"].includes(contract.status) && (
-            <button type="button" className="btn btn-secondary" onClick={openEdit} disabled={acting}>
+          {canEditContract(contract.status) && (
+            <button type="button" className="btn btn-secondary" onClick={() => setEditing(contract)} disabled={acting}>
               Editar contrato
             </button>
           )}
@@ -422,57 +349,15 @@ export function ContractDetailPage() {
         </div>
       )}
 
-      <Modal open={editOpen} title="Editar contrato" onClose={() => !acting && setEditOpen(false)} wide>
-        <form onSubmit={handleEditSubmit}>
-          <div className="field">
-            <label>Título</label>
-            <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} required />
-          </div>
-          <div className="field">
-            <label>Texto do contrato</label>
-            <textarea
-              rows={12}
-              value={editContent}
-              onChange={(e) => setEditContent(e.target.value)}
-              required
-            />
-          </div>
-          <div className="field">
-            <label>Variáveis do contrato</label>
-            <div className="edit-variable-list">
-              {editVariables.map((row) => (
-                <div className="edit-variable-row" key={row.id}>
-                  <input
-                    placeholder="nome_da_variavel"
-                    value={row.key}
-                    onChange={(e) => updateEditVariable(row.id, "key", e.target.value)}
-                  />
-                  <input
-                    placeholder="Valor"
-                    value={row.value}
-                    onChange={(e) => updateEditVariable(row.id, "value", e.target.value)}
-                  />
-                  <button type="button" className="btn btn-secondary" onClick={() => removeEditVariable(row.id)}>
-                    Remover
-                  </button>
-                </div>
-              ))}
-            </div>
-            <button type="button" className="btn btn-secondary" onClick={addEditVariable}>
-              Adicionar variável
-            </button>
-            <small>Exemplo: nome `cnpj_minha_empresa` para usar no modelo como {"{{cnpj_minha_empresa}}"}</small>
-          </div>
-          <div className="form-actions">
-            <button type="button" className="btn btn-secondary" onClick={() => setEditOpen(false)} disabled={acting}>
-              Cancelar
-            </button>
-            <button type="submit" className="btn btn-primary" disabled={acting}>
-              {acting ? "Salvando..." : "Salvar alterações"}
-            </button>
-          </div>
-        </form>
-      </Modal>
+      <ContractEditModal
+        contract={editing}
+        onClose={() => setEditing(null)}
+        onSaved={(updated) => {
+          setContract(updated);
+          setEditing(null);
+          setSuccessMsg("Contrato atualizado.");
+        }}
+      />
     </div>
   );
 }
